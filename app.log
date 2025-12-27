@@ -3677,3 +3677,6 @@
     "text": "너의 미래를 위해 너는 공부도 하고 더 좋은 직장에서 일하며 많은 것을 경험해봐"
   }
 }
+[tele-translate] running. mode=webhook, model=gpt-5.2, autoTranslate=on, ko->Khmer, km->Korean, vi->Korean, allowedChatIds=ALL
+[tele-translate] HTTPS webhook server listening on https://0.0.0.0:58010/telegram-webhook
+[tele-translate] webhook set: https://server.lunarsystem.co.kr/telegram-webhook

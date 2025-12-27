@@ -5,47 +5,19 @@ services:
     build: .
     container_name: lnteletranslate-vietnam
     restart: unless-stopped
-    environment:
-      # 텔레그램 봇 설정
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN_VIETNAM}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      
-      # 번역 설정
-      - TARGET_LANGUAGE=Korean
-      - MODEL=${MODEL:-gpt-4o-mini}
-      - AUTO_TRANSLATE=true
-      - KOREAN_TO=Vietnamese
-      - VIETNAMESE_TO=Korean
-      - ASSUME_LATIN_IS_VIETNAMESE=true
-      
-      # 입력 제한
-      - MAX_INPUT_CHARS=2500
-      
-      # 텔레그램 모드
-      - TELEGRAM_MODE=${TELEGRAM_MODE:-polling}
-      - TELEGRAM_PROXY_URL=${TELEGRAM_PROXY_URL:-}
-      
-      # Webhook 설정 (webhook 모드일 때만 사용)
-      - WEBHOOK_PUBLIC_URL=${WEBHOOK_PUBLIC_URL_VIETNAM:-}
-      - WEBHOOK_PATH=/telegram-webhook-vietnam
-      - WEBHOOK_HOST=0.0.0.0
-      - WEBHOOK_PORT=58011
-      - WEBHOOK_CERT_PATH=${WEBHOOK_CERT_PATH:-}
-      - WEBHOOK_KEY_PATH=${WEBHOOK_KEY_PATH:-}
-      
-      # 허용 채팅 ID (선택사항, 쉼표로 구분)
-      - ALLOWED_CHAT_IDS=${ALLOWED_CHAT_IDS_VIETNAM:-[]}
     volumes:
+      # config.json 파일 마운트 (베트남어 설정)
+      - /lunar/lnteletranslate_vietnam/config.json:/app/config.json:ro
       # 로그 파일을 호스트에 마운트
       - ./data/vietnam/logs:/app/logs
       # SSL 인증서 마운트 (webhook 모드일 때)
-      - ${SSL_CERT_PATH:-/etc/letsencrypt}:/etc/letsencrypt:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "58011:58011"
     networks:
       - translate-network
 
 networks:
-      translate-network:
-        driver: bridge
+  translate-network:
+    driver: bridge
 

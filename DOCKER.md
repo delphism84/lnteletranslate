@@ -16,80 +16,74 @@
 - 텔레그램 봇 토큰 (크메르어용, 베트남어용 각각)
 - OpenAI API 키
 
-## 환경변수 설정
+## 설정 파일 준비
 
-### 1. .env 파일 생성
+각 봇은 자체 `config.json` 파일을 사용합니다:
 
-`.env.example`을 복사하여 `.env` 파일을 생성합니다:
+### 1. 크메르어 봇 설정
 
-```bash
-cp .env.example .env
-```
+`/lunar/lnteletranslate/config.json` 파일이 자동으로 마운트됩니다.
 
-### 2. .env 파일 편집
+### 2. 베트남어 봇 설정
 
-`.env` 파일을 열어서 다음 값들을 입력합니다:
+`/lunar/lnteletranslate_vietnam/config.json` 파일이 자동으로 마운트됩니다.
 
-```env
-# OpenAI API 키 (공통)
-OPENAI_API_KEY=sk-proj-...
-
-# 텔레그램 봇 토큰 (크메르어)
-TELEGRAM_BOT_TOKEN_KHMER=1234567890:ABCdef...
-
-# 텔레그램 봇 토큰 (베트남어)
-TELEGRAM_BOT_TOKEN_VIETNAM=1234567890:XYZuvw...
-
-# 텔레그램 모드 (polling 또는 webhook)
-TELEGRAM_MODE=polling
-
-# Webhook 설정 (webhook 모드일 때만 사용)
-WEBHOOK_PUBLIC_URL_KHMER=https://your-domain.com
-WEBHOOK_PUBLIC_URL_VIETNAM=https://your-domain.com
-WEBHOOK_CERT_PATH=/etc/letsencrypt/live/your-domain.com/fullchain.pem
-WEBHOOK_KEY_PATH=/etc/letsencrypt/live/your-domain.com/privkey.pem
-SSL_CERT_PATH=/etc/letsencrypt
-```
+**중요**: 각 `config.json` 파일에 올바른 텔레그램 봇 토큰과 OpenAI API 키가 설정되어 있어야 합니다.
 
 ## Docker 빌드 및 실행
 
-### 전체 실행 (크메르어 + 베트남어)
+### 빠른 시작 스크립트 사용
 
 ```bash
-# 빌드 및 실행
-docker-compose up -d
-
-# 로그 확인
-docker-compose logs -f
+# 시작
+./scripts/docker-start.sh
 
 # 중지
-docker-compose down
+./scripts/docker-stop.sh
 ```
 
-### 크메르어만 실행
+### 수동 실행
+
+#### 전체 실행 (크메르어 + 베트남어)
 
 ```bash
 # 빌드 및 실행
-docker-compose -f docker-compose.khmer.yml up -d
+docker compose -f docker-compose.khmer.yml up -d
+docker compose -f docker-compose.vietnam.yml up -d
 
 # 로그 확인
-docker-compose -f docker-compose.khmer.yml logs -f
+docker compose -f docker-compose.khmer.yml logs -f
+docker compose -f docker-compose.vietnam.yml logs -f
 
 # 중지
-docker-compose -f docker-compose.khmer.yml down
+docker compose -f docker-compose.khmer.yml down
+docker compose -f docker-compose.vietnam.yml down
 ```
 
-### 베트남어만 실행
+#### 크메르어만 실행
 
 ```bash
 # 빌드 및 실행
-docker-compose -f docker-compose.vietnam.yml up -d
+docker compose -f docker-compose.khmer.yml up -d
 
 # 로그 확인
-docker-compose -f docker-compose.vietnam.yml logs -f
+docker compose -f docker-compose.khmer.yml logs -f
 
 # 중지
-docker-compose -f docker-compose.vietnam.yml down
+docker compose -f docker-compose.khmer.yml down
+```
+
+#### 베트남어만 실행
+
+```bash
+# 빌드 및 실행
+docker compose -f docker-compose.vietnam.yml up -d
+
+# 로그 확인
+docker compose -f docker-compose.vietnam.yml logs -f
+
+# 중지
+docker compose -f docker-compose.vietnam.yml down
 ```
 
 ## 언어 선택 기능
@@ -147,13 +141,13 @@ Webhook 모드를 사용하는 경우, SSL 인증서가 `/etc/letsencrypt`에 �
 
 1. 로그 확인:
    ```bash
-   docker-compose logs
+   docker compose -f docker-compose.khmer.yml logs
+   docker compose -f docker-compose.vietnam.yml logs
    ```
 
-2. 환경변수 확인:
-   ```bash
-   docker-compose config
-   ```
+2. 설정 파일 확인:
+   - 크메르어: `/lunar/lnteletranslate/config.json`
+   - 베트남어: `/lunar/lnteletranslate_vietnam/config.json`
 
 3. 포트 충돌 확인:
    - 크메르어 봇: 포트 58010
@@ -161,9 +155,14 @@ Webhook 모드를 사용하는 경우, SSL 인증서가 `/etc/letsencrypt`에 �
 
 ### 봇이 응답하지 않는 경우
 
-1. 텔레그램 봇 토큰 확인
-2. OpenAI API 키 확인
-3. 네트워크 연결 확인 (프록시 필요 시 `TELEGRAM_PROXY_URL` 설정)
+1. 텔레그램 봇 토큰 확인 (각 config.json 파일에서)
+2. OpenAI API 키 확인 (각 config.json 파일에서)
+3. 네트워크 연결 확인 (프록시 필요 시 config.json의 `telegram.proxyUrl` 설정)
+4. config.json 파일이 올바르게 마운트되었는지 확인:
+   ```bash
+   docker exec lnteletranslate-khmer cat /app/config.json
+   docker exec lnteletranslate-vietnam cat /app/config.json
+   ```
 
 ### Webhook 모드 사용 시
 
@@ -176,24 +175,28 @@ Webhook 모드를 사용하는 경우, SSL 인증서가 `/etc/letsencrypt`에 �
 ### 컨테이너 재시작
 
 ```bash
-docker-compose restart
+docker compose -f docker-compose.khmer.yml restart
+docker compose -f docker-compose.vietnam.yml restart
 ```
 
 ### 컨테이너 재빌드
 
 ```bash
-docker-compose build --no-cache
-docker-compose up -d
+docker compose -f docker-compose.khmer.yml build --no-cache
+docker compose -f docker-compose.khmer.yml up -d
+
+docker compose -f docker-compose.vietnam.yml build --no-cache
+docker compose -f docker-compose.vietnam.yml up -d
 ```
 
 ### 특정 서비스만 재시작
 
 ```bash
 # 크메르어 봇만 재시작
-docker-compose restart lnteletranslate-khmer
+docker compose -f docker-compose.khmer.yml restart
 
 # 베트남어 봇만 재시작
-docker-compose restart lnteletranslate-vietnam
+docker compose -f docker-compose.vietnam.yml restart
 ```
 
 ### 컨테이너 내부 접속
