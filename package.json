@@ -1,0 +1,20 @@
+{
+  "name": "lnteletranslate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js",
+    "list-models": "node scripts/list-models.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "node-telegram-bot-api": "^0.67.0",
+    "openai": "^6.15.0"
+  }
+}

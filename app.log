@@ -1,0 +1,2458 @@
+[tele-translate] running. mode=webhook, model=gpt-5.2, autoTranslate=on, ko->Khmer, km->Korean, allowedChatIds=ALL
+[tele-translate] HTTPS webhook server listening on https://0.0.0.0:58010/telegram-webhook
+[tele-translate] webhook set: https://server.lunarsystem.co.kr/telegram-webhook
+[webhook] POST /telegram-webhook from 139.180.189.230
+[webhook] Received update: {
+  "test": "ping"
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "test": "ping"
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947135,
+  "message": {
+    "message_id": 20320,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": 7851313513,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "type": "private"
+    },
+    "date": 1766783431,
+    "text": "안녕"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947137,
+  "message": {
+    "message_id": 20322,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": 7851313513,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "type": "private"
+    },
+    "date": 1766785176,
+    "text": "/인식모델"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947138,
+  "message": {
+    "message_id": 20323,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": 7851313513,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "type": "private"
+    },
+    "date": 1766785947,
+    "text": "안녕"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947139,
+  "message": {
+    "message_id": 20326,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": 7851313513,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "type": "private"
+    },
+    "date": 1766785981,
+    "text": "어디야?"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947136,
+  "message": {
+    "message_id": 20321,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766785166,
+    "text": "잘자요"
+  }
+}
+[tele-translate] running. mode=webhook, model=gpt-5.2, autoTranslate=on, ko->Khmer, km->Korean, allowedChatIds=ALL
+[tele-translate] HTTPS webhook server listening on https://0.0.0.0:58010/telegram-webhook
+[tele-translate] webhook set: https://server.lunarsystem.co.kr/telegram-webhook
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947140,
+  "message": {
+    "message_id": 20328,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": 7851313513,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "type": "private"
+    },
+    "date": 1766797895,
+    "text": "어디?"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947141,
+  "message": {
+    "message_id": 20330,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800654,
+    "text": "Morning by😘"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947142,
+  "message": {
+    "message_id": 20332,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800670,
+    "text": "안녕☺️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947143,
+  "message": {
+    "message_id": 20334,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800722,
+    "text": "ធ្វើការយូរឬនៅ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947144,
+  "message": {
+    "message_id": 20336,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800725,
+    "text": "ឬទើបភ្ញាក់ពីគេង"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947145,
+  "message": {
+    "message_id": 20338,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800747,
+    "text": "ញាំអាហាររួចនៅ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947146,
+  "message": {
+    "message_id": 20340,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800816,
+    "text": "저는 조금씩 자면서 일하고 있어요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947147,
+  "message": {
+    "message_id": 20342,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800871,
+    "text": "អាណិតណាស់"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947148,
+  "message": {
+    "message_id": 20344,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800920,
+    "text": "លីនបានសារទៅញឹកញាប់ដែរទេ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947149,
+  "message": {
+    "message_id": 20346,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800938,
+    "text": "នាងបានកំដរបងដល់យប់ជ្រៅទេ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947150,
+  "message": {
+    "message_id": 20348,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800977,
+    "text": "어제는 lin이 일찍 잔다고 했어요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947151,
+  "message": {
+    "message_id": 20350,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766800991,
+    "text": "하지만 새벽까지 틱톡을 한거같아요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947152,
+  "message": {
+    "message_id": 20352,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766801020,
+    "text": "ពិតឬ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947153,
+  "message": {
+    "message_id": 20354,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766801057,
+    "text": "អញ្ចឹងហើយយប់មិញអ្នកនៅម្នាក់ឯងមែនទេ អ្នកឯកោណាស់ហើយមែលទៅ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947154,
+  "message": {
+    "message_id": 20356,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766801138,
+    "text": "ខ្ញុំចង់សុំស្គាល់ ប្រូហ្វាល Facebook របស់លីនផងបានទេ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947155,
+  "message": {
+    "message_id": 20358,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766801155,
+    "text": "តើអ្នកមានដែរឬទេ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947156,
+  "message": {
+    "message_id": 20360,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766801357,
+    "text": "응 당연히 혼자지"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947157,
+  "message": {
+    "message_id": 20362,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766801389,
+    "text": "https://www.facebook.com/share/1WcivgwqFY/",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 42,
+        "type": "url"
+      }
+    ],
+    "link_preview_options": {
+      "url": "https://www.facebook.com/share/1WcivgwqFY/"
+    }
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947158,
+  "message": {
+    "message_id": 20364,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766801706,
+    "reply_to_message": {
+      "message_id": 20361,
+      "from": {
+        "id": 8589836369,
+        "is_bot": true,
+        "first_name": "teletranslate",
+        "username": "jo_teletranslate_bot"
+      },
+      "chat": {
+        "id": -5080518590,
+        "title": "Happy Room",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766801358,
+      "edit_date": 1766801698,
+      "text": "អ៊ឺ ប្រាកដណាស់ នៅម្នាក់ឯងដែរ"
+    },
+    "text": "Sorry"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947159,
+  "message": {
+    "message_id": 20366,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802036,
+    "text": "សុំទោសដែលទុក្ខអោយអ្នកនៅម្នាក់ឯង"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947160,
+  "message": {
+    "message_id": 20368,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802046,
+    "text": "괜찮아요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947161,
+  "message": {
+    "message_id": 20370,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802059,
+    "text": "지금 회장님과 이야기중이애ㅛ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947162,
+  "message": {
+    "message_id": 20372,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802070,
+    "text": "우리 관계 매우 조심해야 겟어요😭"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947163,
+  "message": {
+    "message_id": 20374,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802122,
+    "text": "ចាសមិនអីទេ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947164,
+  "message": {
+    "message_id": 20376,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802128,
+    "text": "ខ្ញុំយល់"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947165,
+  "message": {
+    "message_id": 20378,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802252,
+    "text": "ខ្ញុំរវល់ធ្វើការសិនដែរហើយ☺️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947166,
+  "message": {
+    "message_id": 20380,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802440,
+    "text": "Ok"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947167,
+  "message": {
+    "message_id": 20382,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802710,
+    "text": "By🥺"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947168,
+  "message": {
+    "message_id": 20384,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802742,
+    "text": "នៅសុខៗស្រាប់តែមានអារម្ភណ៍មិនល្អសោះ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947169,
+  "message": {
+    "message_id": 20386,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802821,
+    "text": "왜요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947170,
+  "message": {
+    "message_id": 20388,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802851,
+    "text": "ជាតិនេះទោះបីជាមិនមានសំណាងបានធ្វើជាកូនក្រមុំរបស់បង តែក៏សប្បាយចឹត្តដែលបានមានចំណែកតូចមួយនៅក្នុងជីវិតរបស់បង"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947171,
+  "message": {
+    "message_id": 20390,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802868,
+    "text": "정말 고마워요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947172,
+  "message": {
+    "message_id": 20392,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802876,
+    "text": "ហាក់ដូចជាច្រណែននឹងលីន😭"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947173,
+  "message": {
+    "message_id": 20394,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802897,
+    "text": "😭"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947174,
+  "message": {
+    "message_id": 20396,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802908,
+    "text": "សុំទោសដែលតែងតែទាមទាការស្រលាញ់ពីអ្នកច្រើនខ្លាំងពេក"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947175,
+  "message": {
+    "message_id": 20398,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802978,
+    "text": "ក៏ដឹងថាខ្លូនឯងមិនអាចទៅរួច ខ្ញុំមិនគួរចង់ជម្នះខ្លាំងពេកទេ 😭😓"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947176,
+  "message": {
+    "message_id": 20400,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766802988,
+    "text": "ពិតជាសុំទោស"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947177,
+  "message": {
+    "message_id": 20402,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766803051,
+    "text": "បើជាតិក្រោយមានពិតសូមអោយខ្ញុំបានសម្រេចបំណងផងចុះ🙏🥺"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947178,
+  "message": {
+    "message_id": 20404,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766803053,
+    "text": "아니야"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947179,
+  "message": {
+    "message_id": 20406,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766803058,
+    "text": "내가 회장님과 대화중이라"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947180,
+  "message": {
+    "message_id": 20408,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766803063,
+    "text": "답변이 늦어 미안해요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947181,
+  "message": {
+    "message_id": 20410,
+    "from": {
+      "id": 8453245888,
+      "is_bot": false,
+      "first_name": "Za🧟",
+      "last_name": "Zombie 💖🦠"
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766803065,
+    "text": "សុំទោស"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947182,
+  "message": {
+    "message_id": 20412,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766803892,
+    "text": "Lin ❤️ 잘 잤나요?"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947183,
+  "message": {
+    "message_id": 20414,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806688,
+    "text": "ចាខ្ញុំសម្រាកបានល្អណាស់"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947184,
+  "message": {
+    "message_id": 20416,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806706,
+    "text": "Joសម្រាកបានល្អទេ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947185,
+  "message": {
+    "message_id": 20418,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806717,
+    "text": "어제 좀 힘들어 보여서 걱정했어요😁"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947186,
+  "message": {
+    "message_id": 20420,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806720,
+    "text": "ហើយញាំអាហាហើយឬនៅ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947187,
+  "message": {
+    "message_id": 20422,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806731,
+    "text": "네. 어제까지는 늦게까지 일 햇어요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947188,
+  "message": {
+    "message_id": 20424,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806744,
+    "reply_to_message": {
+      "message_id": 20420,
+      "from": {
+        "id": 7863135641,
+        "is_bot": false,
+        "first_name": "Orng Srey Lin❤️",
+        "last_name": "Vrfu"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766806720,
+      "text": "ហើយញាំអាហាហើយឬនៅ"
+    },
+    "text": "아침도 회장님과 먹었어요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947189,
+  "message": {
+    "message_id": 20426,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806762,
+    "text": "Lin오늘은 토요일 이지만 동생들은 학교에 가죠?"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947190,
+  "message": {
+    "message_id": 20428,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806799,
+    "reply_to_message": {
+      "message_id": 20427,
+      "from": {
+        "id": 8589836369,
+        "is_bot": true,
+        "first_name": "teletranslate",
+        "username": "jo_teletranslate_bot"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766806764,
+      "edit_date": 1766806775,
+      "text": "Lin ថ្ងៃនេះជាថ្ងៃសៅរ៍ ប៉ុន្តែប្អូនៗទៅសាលារៀនមែនទេ?"
+    },
+    "text": "ចានៅថ្ងៃនេះប្អូនមិនទៅរៀនទេ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947191,
+  "message": {
+    "message_id": 20430,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806825,
+    "text": "ថ្ងៃនេះខ្ញុំនឹងនាំប្អូនៗទៅផ្សា"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947192,
+  "message": {
+    "message_id": 20431,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806826,
+    "text": "오후에 $100을 더 이체해줄거에요."
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947193,
+  "message": {
+    "message_id": 20434,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806848,
+    "reply_to_message": {
+      "message_id": 20430,
+      "from": {
+        "id": 7863135641,
+        "is_bot": false,
+        "first_name": "Orng Srey Lin❤️",
+        "last_name": "Vrfu"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766806825,
+      "text": "ថ្ងៃនេះខ្ញុំនឹងនាំប្អូនៗទៅផ្សា"
+    },
+    "text": "아, 알겟어요. 주말이니깐 동생들과 가족들과 잘 지내세요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947194,
+  "message": {
+    "message_id": 20436,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806887,
+    "text": "ដើមបីទៅទិញសៀវភៀនឹងរបស់ប្រើប្រាស់អោយពួកគាតខ្លះ"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947195,
+  "message": {
+    "message_id": 20438,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806912,
+    "reply_to_message": {
+      "message_id": 20433,
+      "from": {
+        "id": 8589836369,
+        "is_bot": true,
+        "first_name": "teletranslate",
+        "username": "jo_teletranslate_bot"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766806827,
+      "edit_date": 1766806896,
+      "text": "ខ្ញុំនឹងផ្ទេរប្រាក់បន្ថែម $100 នៅពេលរសៀល។"
+    },
+    "text": "ចាខ្ញុំយល់ហើយណាអរគុណណាស់❤️❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947196,
+  "message": {
+    "message_id": 20440,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806928,
+    "reply_to_message": {
+      "message_id": 20435,
+      "from": {
+        "id": 8589836369,
+        "is_bot": true,
+        "first_name": "teletranslate",
+        "username": "jo_teletranslate_bot"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766806850,
+      "edit_date": 1766806924,
+      "text": "អា ខ្ញុំយល់ហើយ។ ព្រោះជាចុងសប្ដាហ៍ សូមឲ្យអ្នកចំណាយពេលឲ្យបានល្អជាមួយប្អូនៗ និងគ្រួសាររបស់អ្នក"
+    },
+    "text": "ចា❤️❤️❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947197,
+  "message": {
+    "message_id": 20442,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806933,
+    "reply_to_message": {
+      "message_id": 20436,
+      "from": {
+        "id": 7863135641,
+        "is_bot": false,
+        "first_name": "Orng Srey Lin❤️",
+        "last_name": "Vrfu"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766806887,
+      "text": "ដើមបីទៅទិញសៀវភៀនឹងរបស់ប្រើប្រាស់អោយពួកគាតខ្លះ"
+    },
+    "text": "아주 좋아요❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947198,
+  "message": {
+    "message_id": 20444,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766806970,
+    "text": "Joត្រូវសម្រាកផងណា❤️❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947199,
+  "message": {
+    "message_id": 20446,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766807020,
+    "reply_to_message": {
+      "message_id": 20444,
+      "from": {
+        "id": 7863135641,
+        "is_bot": false,
+        "first_name": "Orng Srey Lin❤️",
+        "last_name": "Vrfu"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766806970,
+      "text": "Joត្រូវសម្រាកផងណា❤️❤️"
+    },
+    "text": "네. 1월에는 카지노 일을 끝내고 싶어서 열심히 하고 있어요❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947200,
+  "message": {
+    "message_id": 20448,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766807074,
+    "reply_to_message": {
+      "message_id": 20447,
+      "from": {
+        "id": 8589836369,
+        "is_bot": true,
+        "first_name": "teletranslate",
+        "username": "jo_teletranslate_bot"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766807023,
+      "edit_date": 1766807068,
+      "text": "បាទ/ចាស។ ខ្ញុំកំពុងខិតខំធ្វើការយ៉ាងសកម្ម ព្រោះខ្ញុំចង់បញ្ចប់ការងារកាស៊ីណូក្នុងខែមករា❤️"
+    },
+    "text": "ចាល្អណាស់❤️❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947201,
+  "message": {
+    "message_id": 20450,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766807098,
+    "text": "이따 시장갈때 운전 조심하세요 ❤️💚💜"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947202,
+  "message": {
+    "message_id": 20452,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766807105,
+    "text": "ខ្ញុំសូមជូនពរអោយJoធ្វើកាងាអោយបានល្អណា❤️❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947203,
+  "message": {
+    "message_id": 20454,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766807117,
+    "reply_to_message": {
+      "message_id": 20451,
+      "from": {
+        "id": 8589836369,
+        "is_bot": true,
+        "first_name": "teletranslate",
+        "username": "jo_teletranslate_bot"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766807100,
+      "edit_date": 1766807108,
+      "text": "ពេលក្រោយទៅផ្សារ សូមបើកបរប្រុងប្រយ័ត្នផង ❤️💚💜"
+    },
+    "text": "ចាខ្ញុំយល់ហើយណា❤️❤️❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947204,
+  "message": {
+    "message_id": 20456,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766807136,
+    "reply_to_message": {
+      "message_id": 20452,
+      "from": {
+        "id": 7863135641,
+        "is_bot": false,
+        "first_name": "Orng Srey Lin❤️",
+        "last_name": "Vrfu"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766807105,
+      "edit_date": 1766807113,
+      "text": "ខ្ញុំសូមជូនពរអោយJoធ្វើកាងាអោយបានល្អណា❤️❤️"
+    },
+    "text": "네. Lin을 행복하게 해주고 싶어서 항상 기운이 납니다❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947205,
+  "message": {
+    "message_id": 20458,
+    "from": {
+      "id": 7863135641,
+      "is_bot": false,
+      "first_name": "Orng Srey Lin❤️",
+      "last_name": "Vrfu"
+    },
+    "chat": {
+      "id": -5020617580,
+      "title": "❤️ LOVE ❤️",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766807182,
+    "reply_to_message": {
+      "message_id": 20457,
+      "from": {
+        "id": 8589836369,
+        "is_bot": true,
+        "first_name": "teletranslate",
+        "username": "jo_teletranslate_bot"
+      },
+      "chat": {
+        "id": -5020617580,
+        "title": "❤️ LOVE ❤️",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766807138,
+      "edit_date": 1766807178,
+      "text": "បាទ/ចាស។ ព្រោះខ្ញុំចង់ធ្វើឲ្យ Lin សប្បាយចិត្ត ដូច្នេះខ្ញុំតែងតែមានកម្លាំង❤️"
+    },
+    "text": "ចា❤️❤️❤️"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947206,
+  "message": {
+    "message_id": 20460,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766809803,
+    "reply_to_message": {
+      "message_id": 20354,
+      "from": {
+        "id": 8453245888,
+        "is_bot": false,
+        "first_name": "Za🧟",
+        "last_name": "Zombie 💖🦠"
+      },
+      "chat": {
+        "id": -5080518590,
+        "title": "Happy Room",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766801057,
+      "text": "អញ្ចឹងហើយយប់មិញអ្នកនៅម្នាក់ឯងមែនទេ អ្នកឯកោណាស់ហើយមែលទៅ"
+    },
+    "text": "나는 최근에 너때문에 밤에 행복했어. 매일 늘 혼자야. 베트남 친구도 가끔 술을 먹자고 하는데 나는 그런것에 흥미가 없어"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947207,
+  "message": {
+    "message_id": 20462,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766809902,
+    "reply_to_message": {
+      "message_id": 20344,
+      "from": {
+        "id": 8453245888,
+        "is_bot": false,
+        "first_name": "Za🧟",
+        "last_name": "Zombie 💖🦠"
+      },
+      "chat": {
+        "id": -5080518590,
+        "title": "Happy Room",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766800920,
+      "text": "លីនបានសារទៅញឹកញាប់ដែរទេ"
+    },
+    "text": "주로 아침 11시정도 인사를 주고받고\n낮시간에 식사 잘 먹으라는 안부인사정도 해요\n\n저녁8~9시 정도에 하루 힘들었나, 시장에 갔다, 그런 대화를 하고 잘자라고 합니다.\n\n그런데 그녀는 새벽2~4시까지 틱톡이나 페이스북을 하는것 같아요.\n\n혼자 노는걸 좋아하는거 같아요"
+  }
+}
+[webhook] POST /telegram-webhook from 127.0.0.1
+[webhook] Received update: {
+  "update_id": 586947208,
+  "message": {
+    "message_id": 20464,
+    "from": {
+      "id": 7851313513,
+      "is_bot": false,
+      "first_name": "Jamesmoon",
+      "last_name": "Jo",
+      "username": "JamesmoonJo",
+      "language_code": "ko",
+      "is_premium": true
+    },
+    "chat": {
+      "id": -5080518590,
+      "title": "Happy Room",
+      "type": "group",
+      "all_members_are_administrators": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": false,
+        "limited_gifts": false,
+        "unique_gifts": false,
+        "premium_subscription": false
+      }
+    },
+    "date": 1766809969,
+    "reply_to_message": {
+      "message_id": 20402,
+      "from": {
+        "id": 8453245888,
+        "is_bot": false,
+        "first_name": "Za🧟",
+        "last_name": "Zombie 💖🦠"
+      },
+      "chat": {
+        "id": -5080518590,
+        "title": "Happy Room",
+        "type": "group",
+        "all_members_are_administrators": true,
+        "accepted_gift_types": {
+          "unlimited_gifts": false,
+          "limited_gifts": false,
+          "unique_gifts": false,
+          "premium_subscription": false
+        }
+      },
+      "date": 1766803051,
+      "text": "បើជាតិក្រោយមានពិតសូមអោយខ្ញុំបានសម្រេចបំណងផងចុះ🙏🥺"
+    },
+    "text": "제가 당신에게 지금은 많은 사랑을 줄 수 있는데\n\n내가 결혼할 여자가 생긴다면,\n아마 많이 서운하고 슬플거야.\n\n하지만 나와 2월부터 일하면서 많은 것을 배우고, 같이 있을 수 있어"
+  }
+}

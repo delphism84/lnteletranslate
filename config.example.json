@@ -1,0 +1,29 @@
+{
+  "telegramBotToken": "여기에_텔레그램_봇_토큰",
+  "openaiApiKey": "여기에_OPENAI_API_KEY",
+
+  "targetLanguage": "Korean",
+  "model": "gpt-5.2",
+
+  "allowedChatIds": [],
+
+  "autoTranslate": true,
+  "koreanTo": "Khmer",
+  "khmerTo": "Korean",
+
+  "telegram": {
+    "mode": "polling",
+    "proxyUrl": null,
+    "webhook": {
+      "publicUrl": "https://YOUR_PUBLIC_HTTPS_URL",
+      "path": "/telegram-webhook",
+      "host": "127.0.0.1",
+      "port": 58010
+    }
+  },
+
+  "maxInputChars": 2500,
+  "systemPrompt": "you are a translation engine. keep meaning, tone, emojis, and line breaks. keep code blocks. output translation only."
+}
+
+
