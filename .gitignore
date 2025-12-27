@@ -1,5 +1,9 @@
 node_modules/
 config.json
+configs/*/config.json
 .env
-
+.env.local
+data/
+*.log
+.tele-translate.pid
 

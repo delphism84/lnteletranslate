@@ -22,33 +22,67 @@ function shouldProcessMessage(msg, cfg) {
   return true;
 }
 
-function detectScript(text) {
+function detectScript(text, assumeLatinIsVietnamese = false) {
   // 아주 단순 판별(고급 언어감지는 아님)
   // - hangul: 가-힣
   // - khmer: U+1780–U+17FF (Khmer)
+  // - vietnamese: 베트남어 특수 문자 (ă, â, ê, ô, ơ, ư, đ 등)
   const hasHangul = /[\uAC00-\uD7A3]/.test(text);
   const hasKhmer = /[\u1780-\u17FF]/.test(text);
-  if (hasHangul && !hasKhmer) return "hangul";
-  if (hasKhmer && !hasHangul) return "khmer";
+  const hasVietnameseChars = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/.test(text);
+  const hasLatin = /[a-zA-Z]/.test(text);
+  
+  if (hasHangul && !hasKhmer && !hasVietnameseChars) return "hangul";
+  if (hasKhmer && !hasHangul && !hasVietnameseChars) return "khmer";
+  if (hasVietnameseChars || (assumeLatinIsVietnamese && hasLatin && !hasHangul && !hasKhmer)) return "vietnamese";
   if (hasHangul && hasKhmer) return "mixed";
+  if (hasHangul && hasVietnameseChars) return "mixed";
   return "unknown";
 }
 
-function pickTargetLanguage(cfg, text, replyText) {
+function pickTargetLanguage(cfg, text, replyText, chatLanguageMode = null) {
+  // 채팅별 언어 모드가 설정되어 있으면 우선 사용
+  if (chatLanguageMode === "khmer") {
+    const assumeLatinIsVietnamese = cfg.assumeLatinIsVietnamese !== false;
+    const script = detectScript(text, assumeLatinIsVietnamese);
+    if (script === "hangul") return cfg.koreanTo || "Khmer"; // 한글 -> 크메르어
+    if (script === "khmer") return cfg.khmerTo || "Korean"; // 크메르어 -> 한글
+    if (typeof replyText === "string" && replyText.trim()) {
+      const replyScript = detectScript(replyText, assumeLatinIsVietnamese);
+      if (replyScript === "hangul") return cfg.khmerTo || "Korean";
+      if (replyScript === "khmer") return cfg.koreanTo || "Khmer";
+    }
+    return cfg.targetLanguage || "Korean";
+  } else if (chatLanguageMode === "vietnam") {
+    const assumeLatinIsVietnamese = cfg.assumeLatinIsVietnamese !== false;
+    const script = detectScript(text, assumeLatinIsVietnamese);
+    if (script === "hangul") return cfg.koreanTo || "Vietnamese"; // 한글 -> 베트남어
+    if (script === "vietnamese") return cfg.vietnameseTo || cfg.khmerTo || "Korean"; // 베트남어 -> 한글
+    if (script === "khmer") return cfg.khmerTo || "Korean"; // 크메르어 -> 한글
+    if (typeof replyText === "string" && replyText.trim()) {
+      const replyScript = detectScript(replyText, assumeLatinIsVietnamese);
+      if (replyScript === "hangul") return cfg.vietnameseTo || cfg.khmerTo || "Korean";
+      if (replyScript === "vietnamese") return cfg.koreanTo || "Vietnamese";
+      if (replyScript === "khmer") return cfg.koreanTo || "Vietnamese";
+    }
+    return cfg.targetLanguage || "Korean";
+  }
+
+  // 기본 자동 감지 모드
   if (!cfg.autoTranslate) return cfg.targetLanguage || "Korean";
 
-  const script = detectScript(text);
-  if (script === "hangul") return cfg.koreanTo; // 한글 -> 크메르어
-  if (script === "khmer") return cfg.khmerTo; // 크메르어 -> 한글
+  const assumeLatinIsVietnamese = cfg.assumeLatinIsVietnamese !== false;
+  const script = detectScript(text, assumeLatinIsVietnamese);
+  if (script === "hangul") return cfg.koreanTo || "Khmer"; // 한글 -> 크메르어/베트남어
+  if (script === "khmer") return cfg.khmerTo || "Korean"; // 크메르어 -> 한글
+  if (script === "vietnamese") return cfg.vietnameseTo || cfg.khmerTo || "Korean"; // 베트남어 -> 한글
 
   // 답글(Reply)이고 현재 메시지가 애매하면, "답글 대상 메시지"를 기준으로 방향을 추정합니다.
-  // 예)
-  // - 답글 대상이 한국어(한글)이면: 보통 상대는 크메르어로 답하므로 => 한국어로 번역(khmerTo)
-  // - 답글 대상이 크메르어면: 보통 상대는 한국어로 답하므로 => 크메르어로 번역(koreanTo)
   if (typeof replyText === "string" && replyText.trim()) {
-    const replyScript = detectScript(replyText);
-    if (replyScript === "hangul") return cfg.khmerTo; // (추정) 크메르어 -> 한글
-    if (replyScript === "khmer") return cfg.koreanTo; // (추정) 한글 -> 크메르어
+    const replyScript = detectScript(replyText, assumeLatinIsVietnamese);
+    if (replyScript === "hangul") return cfg.vietnameseTo || cfg.khmerTo || "Korean";
+    if (replyScript === "vietnamese") return cfg.koreanTo || "Vietnamese";
+    if (replyScript === "khmer") return cfg.koreanTo || "Khmer";
   }
 
   // 섞였거나 애매하면, 기존 targetLanguage로 fallback
@@ -71,6 +105,9 @@ async function main() {
   }
 
   const cfg = loadConfig();
+  
+  // 채팅별 언어 모드 저장 (chatId -> "khmer" | "vietnam" | null)
+  const chatLanguageModes = new Map();
 
   const request = cfg.telegram?.proxyUrl ? { proxy: cfg.telegram.proxyUrl } : undefined;
   const mode = (cfg.telegram?.mode || "polling").toLowerCase();
@@ -97,7 +134,8 @@ async function main() {
       const original = clampText(msg.text, cfg.maxInputChars);
       const replyText =
         typeof msg?.reply_to_message?.text === "string" ? msg.reply_to_message.text : null;
-      const targetLanguage = pickTargetLanguage(cfg, original, replyText);
+      const chatLanguageMode = chatLanguageModes.get(chatId) || null;
+      const targetLanguage = pickTargetLanguage(cfg, original, replyText, chatLanguageMode);
 
       // 간단 중복 방지: 같은 메시지에 대해 여러 번 처리되지 않게
       // (텔레그램 업데이트 재전송/재시작 시 케이스 대비)
@@ -129,6 +167,37 @@ async function main() {
 
   bot.onText(/\/ping/, async (msg) => {
     await bot.sendMessage(msg.chat.id, "pong", { reply_to_message_id: msg.message_id });
+  });
+
+  // 언어 선택 명령어
+  bot.onText(/\/언어\s*1/, async (msg) => {
+    const chatId = msg.chat.id;
+    chatLanguageModes.set(chatId, "khmer");
+    await bot.sendMessage(
+      chatId,
+      "✅ 크메르어 모드로 설정되었습니다.\n한국어 ↔ 크메르어 번역이 활성화됩니다.",
+      { reply_to_message_id: msg.message_id }
+    );
+  });
+
+  bot.onText(/\/언어\s*2/, async (msg) => {
+    const chatId = msg.chat.id;
+    chatLanguageModes.set(chatId, "vietnam");
+    await bot.sendMessage(
+      chatId,
+      "✅ 베트남어 모드로 설정되었습니다.\n한국어 ↔ 베트남어 번역이 활성화됩니다.",
+      { reply_to_message_id: msg.message_id }
+    );
+  });
+
+  bot.onText(/\/언어\s*(리셋|reset|0)/, async (msg) => {
+    const chatId = msg.chat.id;
+    chatLanguageModes.delete(chatId);
+    await bot.sendMessage(
+      chatId,
+      "✅ 자동 감지 모드로 리셋되었습니다.\n메시지를 분석하여 자동으로 언어를 감지합니다.",
+      { reply_to_message_id: msg.message_id }
+    );
   });
 
   if (mode === "webhook") {
@@ -199,7 +268,7 @@ async function main() {
     `[tele-translate] running. mode=${mode}, model=${cfg.model}, autoTranslate=${
       cfg.autoTranslate ? "on" : "off"
     }` +
-      `, ko->${cfg.koreanTo}, km->${cfg.khmerTo}` +
+      `, ko->${cfg.koreanTo}, km->${cfg.khmerTo}, vi->${cfg.vietnameseTo || cfg.khmerTo}` +
       (Array.isArray(cfg.allowedChatIds) && cfg.allowedChatIds.length > 0
         ? `, allowedChatIds=${cfg.allowedChatIds.join(",")}`
         : ", allowedChatIds=ALL")
