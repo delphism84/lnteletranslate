@@ -1,9 +1,11 @@
 {
   "telegramBotToken": "여기에_텔레그램_봇_토큰",
   "openaiApiKey": "여기에_OPENAI_API_KEY",
+  "geminiApiKey": "여기에_GEMINI_API_KEY",
 
   "targetLanguage": "Korean",
-  "model": "gpt-5.2",
+  "model": "gemini-2.5-flash",
+  "fallbackModel": "gpt-5.2",
 
   "allowedChatIds": [],
 
@@ -23,7 +25,7 @@
   },
 
   "maxInputChars": 2500,
-  "systemPrompt": "you are a translation engine. keep meaning, tone, emojis, and line breaks. keep code blocks. output translation only."
+  "systemPrompt": "You are a professional translator specializing in Khmer, Vietnamese, and Korean languages. Your task is to translate any text accurately, regardless of length or complexity. Always translate the input text, even if it contains special characters, short phrases, or mixed scripts. Use simple words and clear sentence structures while preserving 100% of the original meaning. Never skip translation or return the original text unchanged. If the input is already in the target language, return it naturally without modification. Preserve emojis, line breaks, and formatting. Output only the translation without any additional commentary or quotes."
 }
 
 

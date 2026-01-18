@@ -1,19 +1,16 @@
-version: '3.8'
-
 services:
   lnteletranslate-khmer:
     build: .
     container_name: lnteletranslate-khmer
     restart: unless-stopped
     volumes:
-      # config.json 파일 마운트 (크메르어 설정)
-      - ./config.json:/app/config.json:ro
-      # 로그 파일을 호스트에 마운트
-      - ./data/khmer/logs:/app/logs
+      # config.json 파일 마운트 (크메르 설정)
+      - ./configs/khmer.example.json:/app/config.json:ro
+      - ./data/khmer:/app/data
       # SSL 인증서 마운트 (webhook 모드일 때)
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
-      - "58010:58010"
+      - "64000:64000"
     networks:
       - translate-network
 

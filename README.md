@@ -1,11 +1,12 @@
-# 텔레그램 번역 봇 (Node + OpenAI)
+# 텔레그램 번역 봇 (Node + Gemini/OpenAI)
 
-텔레그램 채팅에 들어오는 텍스트를 **OpenAI(GPT)로 번역**해서, 원문 메시지에 **답글 형태로 번역문을 전송**합니다.
+텔레그램 채팅에 들어오는 텍스트를 **Gemini(기본)** 로 번역하고, 실패/제한 시 **OpenAI(GPT-5.2)로 폴백**하여 원문 메시지에 **답글 형태로 번역문을 전송**합니다.
 
 ## 준비물
 
 - 텔레그램 봇 토큰 (BotFather)
-- OpenAI API Key
+- Gemini API Key (권장)
+- OpenAI API Key (폴백용)
 
 ## 설치
 
@@ -21,15 +22,34 @@ npm i
 ### 주요 설정
 
 - `telegramBotToken`: 텔레그램 봇 토큰
-- `openaiApiKey`: OpenAI API Key
+- `geminiApiKey`: Gemini API Key
+- `openaiApiKey`: OpenAI API Key (Gemini 폴백용)
 - `targetLanguage`: 번역 목표 언어 (예: `Korean`, `English`, `Japanese` 등)
-- `model`: 기본 `gpt-4o-mini`
+- `model`: 기본 `gemini-2.5-flash`
+- `fallbackModel`: Gemini 실패 시 사용할 OpenAI 모델 (기본 `gpt-5.2`)
 - `allowedChatIds`: 지정하면 **해당 채팅 ID에서만** 동작 (미지정/`null`이면 전체 허용)
 
 ## 실행
 
 ```bash
 npm run start
+```
+
+## Docker 실행 (크메르/베트남 2개 서비스)
+
+`configs/khmer.example.json`, `configs/viet.example.json`를 각각 컨테이너의 `/app/config.json`으로 마운트해서 2개 봇을 동시에 띄웁니다.
+
+```bash
+./scripts/docker-start.sh
+```
+
+## systemd 자동 기동 (부팅 시 자동 시작)
+
+Docker의 `restart: unless-stopped` 로 **컨테이너/프로세스 장애 시 자동 재시작**되고, 아래 systemd 유닛으로 **서버 부팅 시 compose 스택이 자동으로 올라오게** 할 수 있습니다.
+
+```bash
+sudo ./scripts/create-systemd-docker-service.sh
+sudo systemctl start lnteletranslate-docker
 ```
 
 ## 지원 모델 확인(내 키 기준)
@@ -44,6 +64,8 @@ npm run list-models
 
 - 일반 텍스트 메시지를 보내면 번역 답글이 달립니다.
 - `/ping` 을 보내면 `pong` 으로 응답합니다.
+- `/인식모델 1` 은 현재 기본 설정(`model` + `fallbackModel`)을 사용합니다. (기본: Gemini)
+- `/인식모델 2` 는 `gpt-5.2` 를 강제로 사용합니다.
 
 ## HTTPS Webhook 설정
 

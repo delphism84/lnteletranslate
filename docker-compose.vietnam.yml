@@ -1,19 +1,16 @@
-version: '3.8'
-
 services:
   lnteletranslate-vietnam:
     build: .
     container_name: lnteletranslate-vietnam
     restart: unless-stopped
     volumes:
-      # config.json 파일 마운트 (베트남어 설정)
-      - /lunar/lnteletranslate_vietnam/config.json:/app/config.json:ro
-      # 로그 파일을 호스트에 마운트
-      - ./data/vietnam/logs:/app/logs
+      # config.json 파일 마운트 (베트남 설정)
+      - ./configs/viet.example.json:/app/config.json:ro
+      - ./data/vietnam:/app/data
       # SSL 인증서 마운트 (webhook 모드일 때)
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
-      - "58011:58011"
+      - "64001:64001"
     networks:
       - translate-network
 

@@ -17,7 +17,11 @@ function acquirePidLock(lockFileRelative = ".tele-translate.pid") {
   if (fs.existsSync(lockPath)) {
     try {
       const existingPid = Number(String(fs.readFileSync(lockPath, "utf8")).trim());
-      if (isProcessAlive(existingPid)) {
+      // 컨테이너 재시작 등으로 PID가 재사용될 수 있습니다(특히 PID=1).
+      // 이 경우 "내 PID와 동일"하면 락을 소유한 것으로 보고 덮어씁니다.
+      if (existingPid && existingPid === process.pid) {
+        // continue to overwrite below
+      } else if (isProcessAlive(existingPid)) {
         return { acquired: false, lockPath, existingPid };
       }
     } catch {

@@ -1,19 +1,17 @@
-version: '3.8'
-
 services:
   lnteletranslate-khmer:
     build: .
     container_name: lnteletranslate-khmer
     restart: unless-stopped
     volumes:
-      # config.json 파일 마운트 (크메르어 설정)
-      - ./config.json:/app/config.json:ro
-      # 로그 파일을 호스트에 마운트
-      - ./data/khmer/logs:/app/logs
+      # config.json 파일 마운트 (크메르 설정)
+      - ./configs/khmer.example.json:/app/config.json:ro
+      # 데이터/로그(필요 시 사용)
+      - ./data/khmer:/app/data
       # SSL 인증서 마운트 (webhook 모드일 때)
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
-      - "58010:58010"
+      - "64000:64000"
     networks:
       - translate-network
 
@@ -22,14 +20,14 @@ services:
     container_name: lnteletranslate-vietnam
     restart: unless-stopped
     volumes:
-      # config.json 파일 마운트 (베트남어 설정)
-      - /lunar/lnteletranslate_vietnam/config.json:/app/config.json:ro
-      # 로그 파일을 호스트에 마운트
-      - ./data/vietnam/logs:/app/logs
+      # config.json 파일 마운트 (베트남 설정)
+      - ./configs/viet.example.json:/app/config.json:ro
+      # 데이터/로그(필요 시 사용)
+      - ./data/vietnam:/app/data
       # SSL 인증서 마운트 (webhook 모드일 때)
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
-      - "58011:58011"
+      - "64001:64001"
     networks:
       - translate-network
 

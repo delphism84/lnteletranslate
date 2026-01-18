@@ -27,24 +27,22 @@ npm install
 
 ### 3. 언어별 설정 선택
 
-크메르어 또는 베트남어 중 하나를 선택하여 설정 파일을 복사합니다.
+크메르어 또는 베트남어 중 하나를 선택하여 설정 파일을 준비합니다.
 
-**크메르어 봇:**
-```bash
-cp configs/khmer/config.json config.json
-```
+#### Docker로 2개 봇 동시 운영(권장)
 
-**베트남어 봇:**
-```bash
-cp configs/vietnam/config.json config.json
-```
+- 크메르: `configs/khmer.example.json`
+- 베트남: `configs/viet.example.json`
+
+`docker-compose.yml`이 위 두 파일을 각각 컨테이너 `/app/config.json`으로 마운트해서 2개 봇을 동시에 띄웁니다.
 
 ### 4. 설정 파일 편집
 
-`config.json` 파일을 열어서 다음 값을 입력합니다:
+설정 파일을 열어서 다음 값을 입력합니다:
 
 - `telegramBotToken`: 텔레그램 봇 토큰 (BotFather에서 발급)
-- `openaiApiKey`: OpenAI API 키
+- `geminiApiKey`: Gemini API 키
+- `openaiApiKey`: OpenAI API 키 (Gemini 실패 시 폴백용)
 - `allowedChatIds`: 허용할 채팅 ID 배열 (선택사항)
 
 ## 크메르어 봇 설정
@@ -52,14 +50,8 @@ cp configs/vietnam/config.json config.json
 ### 빠른 시작
 
 ```bash
-# 설정 파일 복사
-cp configs/khmer/config.json config.json
-
-# 설정 파일 편집 (필수)
-nano config.json  # 또는 vi, vim 등
-
-# 시작
-./scripts/start-khmer.sh
+# Docker 시작 (2개 같이)
+./scripts/docker-start.sh
 ```
 
 ### 상세 설정
@@ -71,14 +63,8 @@ nano config.json  # 또는 vi, vim 등
 ### 빠른 시작
 
 ```bash
-# 설정 파일 복사
-cp configs/vietnam/config.json config.json
-
-# 설정 파일 편집 (필수)
-nano config.json  # 또는 vi, vim 등
-
-# 시작
-./scripts/start-vietnam.sh
+# Docker 시작 (2개 같이)
+./scripts/docker-start.sh
 ```
 
 ### 상세 설정
@@ -173,35 +159,11 @@ sudo ./scripts/create-systemd-service.sh
 
 ## 동시 실행 (크메르어 + 베트남어)
 
-두 봇을 동시에 실행하려면:
+두 봇을 동시에 실행하려면 Docker Compose를 사용하세요:
 
-1. **별도 디렉토리 사용 방법:**
 ```bash
-# 크메르어 봇
-cd /lunar/lnteletranslate-khmer
-cp ../lnteletranslate/configs/khmer/config.json config.json
-npm install
-npm run start
-
-# 베트남어 봇 (다른 터미널)
-cd /lunar/lnteletranslate-vietnam
-cp ../lnteletranslate/configs/vietnam/config.json config.json
-npm install
-npm run start
+./scripts/docker-start.sh
 ```
-
-2. **PM2 사용 방법:**
-```bash
-# 크메르어 봇
-cp configs/khmer/config.json config-khmer.json
-pm2 start src/index.js --name lnteletranslate-khmer -- --config config-khmer.json
-
-# 베트남어 봇
-cp configs/vietnam/config.json config-vietnam.json
-pm2 start src/index.js --name lnteletranslate-vietnam -- --config config-vietnam.json
-```
-
-**참고**: PM2 방법을 사용하려면 `src/index.js`가 `--config` 옵션을 지원하도록 수정해야 합니다.
 
 ## Webhook 모드 설정
 
@@ -221,7 +183,7 @@ sudo ./scripts/setup-cron.sh
 
 ### 3. config.json 수정
 
-크메르어 봇 (포트 58010):
+크메르어 봇 (포트 64000):
 ```json
 {
   "telegram": {
@@ -230,7 +192,7 @@ sudo ./scripts/setup-cron.sh
       "publicUrl": "https://your-domain.com",
       "path": "/telegram-webhook",
       "host": "0.0.0.0",
-      "port": 58010,
+      "port": 64000,
       "certPath": "/etc/letsencrypt/live/your-domain.com/fullchain.pem",
       "keyPath": "/etc/letsencrypt/live/your-domain.com/privkey.pem"
     }
@@ -238,7 +200,7 @@ sudo ./scripts/setup-cron.sh
 }
 ```
 
-베트남어 봇 (포트 58011):
+베트남어 봇 (포트 64001):
 ```json
 {
   "telegram": {
@@ -247,7 +209,7 @@ sudo ./scripts/setup-cron.sh
       "publicUrl": "https://your-domain.com",
       "path": "/telegram-webhook-vietnam",
       "host": "0.0.0.0",
-      "port": 58011,
+      "port": 64001,
       "certPath": "/etc/letsencrypt/live/your-domain.com/fullchain.pem",
       "keyPath": "/etc/letsencrypt/live/your-domain.com/privkey.pem"
     }
@@ -293,8 +255,8 @@ sudo ./scripts/setup-cron.sh
 ### 포트 충돌 문제
 
 크메르어와 베트남어 봇을 동시에 실행할 때:
-- 크메르어 봇: 포트 58010 (webhook 모드)
-- 베트남어 봇: 포트 58011 (webhook 모드)
+- 크메르어 봇: 포트 64000 (webhook 모드)
+- 베트남어 봇: 포트 64001 (webhook 모드)
 
 포트가 충돌하면 `config.json`에서 포트 번호를 변경하세요.
 

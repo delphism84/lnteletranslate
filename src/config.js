@@ -2,59 +2,31 @@ const fs = require("fs");
 const path = require("path");
 
 function loadConfig() {
-  // 환경변수 우선, 없으면 config.json 사용
-  let cfg = {};
-  
-  // 환경변수에서 설정 로드
-  if (process.env.TELEGRAM_BOT_TOKEN || process.env.OPENAI_API_KEY) {
-    cfg = {
-      telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
-      openaiApiKey: process.env.OPENAI_API_KEY,
-      targetLanguage: process.env.TARGET_LANGUAGE || "Korean",
-      model: process.env.MODEL || "gpt-4o-mini",
-      allowedChatIds: process.env.ALLOWED_CHAT_IDS ? JSON.parse(process.env.ALLOWED_CHAT_IDS) : [],
-      autoTranslate: process.env.AUTO_TRANSLATE !== "false",
-      koreanTo: process.env.KOREAN_TO || "Khmer",
-      khmerTo: process.env.KHMER_TO || "Korean",
-      vietnameseTo: process.env.VIETNAMESE_TO || "Korean",
-      assumeLatinIsVietnamese: process.env.ASSUME_LATIN_IS_VIETNAMESE !== "false",
-      maxInputChars: parseInt(process.env.MAX_INPUT_CHARS || "2500", 10),
-      systemPrompt: process.env.SYSTEM_PROMPT || "you are a translation engine. keep meaning, tone, emojis, and line breaks. keep code blocks. output translation only.",
-      telegram: {
-        mode: (process.env.TELEGRAM_MODE || "polling").toLowerCase(),
-        proxyUrl: process.env.TELEGRAM_PROXY_URL || null,
-        webhook: {
-          publicUrl: process.env.WEBHOOK_PUBLIC_URL || null,
-          path: process.env.WEBHOOK_PATH || "/telegram-webhook",
-          host: process.env.WEBHOOK_HOST || "127.0.0.1",
-          port: parseInt(process.env.WEBHOOK_PORT || "58010", 10),
-          certPath: process.env.WEBHOOK_CERT_PATH || null,
-          keyPath: process.env.WEBHOOK_KEY_PATH || null,
-        },
-      },
-    };
-  } else {
-    // config.json 파일에서 로드
-    const configPath = path.join(process.cwd(), "config.json");
-    if (!fs.existsSync(configPath)) {
-      throw new Error(
-        "config.json 파일이 없습니다. config.example.json 을 복사해서 config.json 을 만들고 값을 채워주세요."
-      );
-    }
-
-    const raw = fs.readFileSync(configPath, "utf8");
-    cfg = JSON.parse(raw);
+  const configPath = path.isAbsolute(process.env.CONFIG_PATH || "")
+    ? process.env.CONFIG_PATH
+    : path.join(process.cwd(), process.env.CONFIG_PATH || "config.json");
+  if (!fs.existsSync(configPath)) {
+    throw new Error(
+      "config.json 파일이 없습니다. config.example.json 을 복사해서 config.json 을 만들고 값을 채워주세요."
+    );
   }
 
-  if (!cfg.telegramBotToken) throw new Error("설정 오류: telegramBotToken 누락");
-  if (!cfg.openaiApiKey) throw new Error("설정 오류: openaiApiKey 누락");
+  const raw = fs.readFileSync(configPath, "utf8");
+  const cfg = JSON.parse(raw);
+
+  if (!cfg.telegramBotToken) throw new Error("config.json: telegramBotToken 누락");
+  // OpenAI 또는 Gemini API 키 중 하나는 필수
+  if (!cfg.openaiApiKey && !cfg.geminiApiKey) {
+    throw new Error("config.json: openaiApiKey 또는 geminiApiKey 중 하나는 필수입니다");
+  }
 
   const telegramCfg = cfg.telegram || {};
   const webhookCfg = telegramCfg.webhook || {};
 
   return {
     telegramBotToken: cfg.telegramBotToken,
-    openaiApiKey: cfg.openaiApiKey,
+    openaiApiKey: cfg.openaiApiKey || null,
+    geminiApiKey: cfg.geminiApiKey || null,
     // allowedChatIds:
     // - null/undefined: 전체 허용 (필터 없음)
     // - []: 전체 허용
@@ -63,11 +35,14 @@ function loadConfig() {
 
     // legacy (단방향) 지원용. 현재 프로젝트는 auto(한글<->크메르) 사용.
     targetLanguage: cfg.targetLanguage || "Korean",
-    model: cfg.model || "gpt-5.2",
+    // 기본값: 크메르 봇 운영값 기준 (Gemini 우선)
+    model: cfg.model || "gemini-2.5-flash",
+    // Gemini 실패/제한 시 폴백 (결제/쿼터 문제 대비)
+    fallbackModel: cfg.fallbackModel || "gpt-5.2",
     maxInputChars: Number.isFinite(cfg.maxInputChars) ? cfg.maxInputChars : 2500,
     systemPrompt:
       cfg.systemPrompt ||
-      "you are a translation engine. keep meaning, tone, emojis, and line breaks. keep code blocks. output translation only.",
+      "You are a professional translator specializing in Khmer, Vietnamese, and Korean languages. Your task is to translate any text accurately, regardless of length or complexity. Always translate the input text, even if it contains special characters, short phrases, or mixed scripts. Use simple words and clear sentence structures while preserving 100% of the original meaning. Never skip translation or return the original text unchanged. If the input is already in the target language, return it naturally without modification. Preserve emojis, line breaks, and formatting. Output only the translation without any additional commentary or quotes.",
 
     // auto 번역 (한글<->크메르어 또는 한글<->베트남어)
     autoTranslate: cfg.autoTranslate !== false,

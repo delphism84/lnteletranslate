@@ -3,6 +3,9 @@
 # 사용법: ./scripts/service-control.sh [start|stop|restart|status|logs|enable|disable]
 
 SERVICE_NAME="lnteletranslate"
+if systemctl list-unit-files | grep -q "^lnteletranslate-docker\\.service"; then
+    SERVICE_NAME="lnteletranslate-docker"
+fi
 
 case "$1" in
     start)

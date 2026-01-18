@@ -1,6 +1,6 @@
 # Docker를 사용한 번역 봇 실행 가이드
 
-이 가이드는 Docker를 사용하여 크메르어 및 베트남어 번역 봇을 실행하는 방법을 설명합니다.
+이 가이드는 Docker를 사용하여 **크메르/베트남 2개 번역 봇**을 실행하는 방법을 설명합니다.
 
 ## 목차
 
@@ -14,21 +14,22 @@
 
 - Docker 및 Docker Compose 설치
 - 텔레그램 봇 토큰 (크메르어용, 베트남어용 각각)
-- OpenAI API 키
+- Gemini API 키 (권장)
+- OpenAI API 키 (Gemini 실패 시 폴백용)
 
 ## 설정 파일 준비
 
-각 봇은 자체 `config.json` 파일을 사용합니다:
+각 봇은 자체 `config.json` 파일을 사용합니다. 이 repo에서는 예시 설정을 `configs/`에 보관하고, 컨테이너에는 `/app/config.json`으로 마운트합니다.
 
 ### 1. 크메르어 봇 설정
 
-`/lunar/lnteletranslate/config.json` 파일이 자동으로 마운트됩니다.
+`configs/khmer.example.json` → 컨테이너 `/app/config.json`
 
 ### 2. 베트남어 봇 설정
 
-`/lunar/lnteletranslate_vietnam/config.json` 파일이 자동으로 마운트됩니다.
+`configs/viet.example.json` → 컨테이너 `/app/config.json`
 
-**중요**: 각 `config.json` 파일에 올바른 텔레그램 봇 토큰과 OpenAI API 키가 설정되어 있어야 합니다.
+**중요**: 각 설정 파일에 올바른 텔레그램 봇 토큰과 API 키가 설정되어 있어야 합니다.
 
 ## Docker 빌드 및 실행
 
@@ -47,43 +48,40 @@
 #### 전체 실행 (크메르어 + 베트남어)
 
 ```bash
-# 빌드 및 실행
-docker compose -f docker-compose.khmer.yml up -d
-docker compose -f docker-compose.vietnam.yml up -d
+# 빌드 및 실행 (2개 서비스)
+docker compose up -d --build
 
 # 로그 확인
-docker compose -f docker-compose.khmer.yml logs -f
-docker compose -f docker-compose.vietnam.yml logs -f
+docker compose logs -f
 
 # 중지
-docker compose -f docker-compose.khmer.yml down
-docker compose -f docker-compose.vietnam.yml down
+docker compose down
 ```
 
 #### 크메르어만 실행
 
 ```bash
 # 빌드 및 실행
-docker compose -f docker-compose.khmer.yml up -d
+docker compose up -d --build lnteletranslate-khmer
 
 # 로그 확인
-docker compose -f docker-compose.khmer.yml logs -f
+docker compose logs -f lnteletranslate-khmer
 
 # 중지
-docker compose -f docker-compose.khmer.yml down
+docker compose stop lnteletranslate-khmer
 ```
 
 #### 베트남어만 실행
 
 ```bash
 # 빌드 및 실행
-docker compose -f docker-compose.vietnam.yml up -d
+docker compose up -d --build lnteletranslate-vietnam
 
 # 로그 확인
-docker compose -f docker-compose.vietnam.yml logs -f
+docker compose logs -f lnteletranslate-vietnam
 
 # 중지
-docker compose -f docker-compose.vietnam.yml down
+docker compose stop lnteletranslate-vietnam
 ```
 
 ## 언어 선택 기능
@@ -92,7 +90,14 @@ docker compose -f docker-compose.vietnam.yml down
 
 - `/언어 1` - 크메르어 모드로 설정 (한국어 ↔ 크메르어)
 - `/언어 2` - 베트남어 모드로 설정 (한국어 ↔ 베트남어)
-- `/언어 리셋` 또는 `/언어 0` - 자동 감지 모드로 리셋
+  - 선택하지 않으면 자동 감지 모드로 동작합니다.
+
+## 인식모델 선택 기능
+
+번역에 사용할 AI 모델을 채팅방별로 선택할 수 있습니다:
+
+- `/인식모델 1` - 기본 설정 사용 (기본: Gemini, 실패 시 `gpt-5.2` 폴백)
+- `/인식모델 2` - `gpt-5.2` 강제 사용
 
 ### 사용 예시
 
@@ -110,16 +115,9 @@ docker compose -f docker-compose.vietnam.yml down
        한국어 ↔ 베트남어 번역이 활성화됩니다.
    ```
 
-3. 자동 감지 모드로 리셋:
-   ```
-   사용자: /언어 리셋
-   봇: ✅ 자동 감지 모드로 리셋되었습니다.
-       메시지를 분석하여 자동으로 언어를 감지합니다.
-   ```
-
 ## 디스크 마운트
 
-로그 파일은 호스트의 `./data/khmer/logs` 및 `./data/vietnam/logs` 디렉토리에 마운트됩니다.
+데이터/로그 디렉토리는 호스트의 `./data/khmer`, `./data/vietnam`에 마운트됩니다.
 
 ### 로그 확인
 
@@ -146,12 +144,12 @@ Webhook 모드를 사용하는 경우, SSL 인증서가 `/etc/letsencrypt`에 �
    ```
 
 2. 설정 파일 확인:
-   - 크메르어: `/lunar/lnteletranslate/config.json`
-   - 베트남어: `/lunar/lnteletranslate_vietnam/config.json`
+   - 크메르: `configs/khmer.example.json`
+   - 베트남: `configs/viet.example.json`
 
 3. 포트 충돌 확인:
-   - 크메르어 봇: 포트 58010
-   - 베트남어 봇: 포트 58011
+   - 크메르어 봇: 포트 64000
+   - 베트남어 봇: 포트 64001
 
 ### 봇이 응답하지 않는 경우
 
@@ -175,28 +173,24 @@ Webhook 모드를 사용하는 경우, SSL 인증서가 `/etc/letsencrypt`에 �
 ### 컨테이너 재시작
 
 ```bash
-docker compose -f docker-compose.khmer.yml restart
-docker compose -f docker-compose.vietnam.yml restart
+docker compose restart
 ```
 
 ### 컨테이너 재빌드
 
 ```bash
-docker compose -f docker-compose.khmer.yml build --no-cache
-docker compose -f docker-compose.khmer.yml up -d
-
-docker compose -f docker-compose.vietnam.yml build --no-cache
-docker compose -f docker-compose.vietnam.yml up -d
+docker compose build --no-cache
+docker compose up -d --build
 ```
 
 ### 특정 서비스만 재시작
 
 ```bash
 # 크메르어 봇만 재시작
-docker compose -f docker-compose.khmer.yml restart
+docker compose restart lnteletranslate-khmer
 
 # 베트남어 봇만 재시작
-docker compose -f docker-compose.vietnam.yml restart
+docker compose restart lnteletranslate-vietnam
 ```
 
 ### 컨테이너 내부 접속
