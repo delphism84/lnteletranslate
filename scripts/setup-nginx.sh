@@ -1,6 +1,9 @@
 #!/bin/bash
-# nginx 리버스 프록시 설정 스크립트
+# nginx 리버스 프록시 설정 스크립트 (translatebot/lnteletranslate 전용)
 # 사용법: sudo ./scripts/setup-nginx.sh
+#
+# 주의: 이 파일은 translatebot 전용. 인증서 경로/설정 변경 시 봇이 멈춤.
+#       다른 서비스(lnsms, srmes 등) 설정은 이 스크립트로 건드리지 말 것.
 
 set -e
 
@@ -13,7 +16,18 @@ echo "[Nginx Setup] 도메인: $DOMAIN"
 echo "[Nginx Setup] 백엔드 포트: $WEBHOOK_PORT"
 
 # nginx 설정 파일 생성
+# 주의: 이 파일은 translatebot(lnteletranslate) 전용. 인증서 경로/이름 변경 금지.
 sudo tee "$NGINX_CONF" > /dev/null <<EOF
+# =============================================================================
+# translatebot(lnteletranslate) 전용 - server.lunarsystem.co.kr 웹훅
+# =============================================================================
+# [절대 금지]
+#   - 이 server 블록 중지/삭제 금지 (봇 중단).
+#   - ssl_certificate / ssl_certificate_key 변경 금지 (인증서 건드리면 봇 중단).
+# [다른 서비스]
+#   - LNSMS 등 다른 설정(sites-available/lnsms) 수정 시 이 파일은 건드리지 말 것.
+# [수정 이력] AI 수정 시: [Cursor AI 수정: YYYY-MM-DD 내용요약]
+# =============================================================================
 server {
     listen 443 ssl;
     http2 on;

@@ -14,7 +14,19 @@ function loadConfig() {
   const raw = fs.readFileSync(configPath, "utf8");
   const cfg = JSON.parse(raw);
 
-  if (!cfg.telegramBotToken) throw new Error("config.json: telegramBotToken 누락");
+  // 멀티봇: bots 배열 또는 단일 telegramBotToken(레거시)
+  const bots = Array.isArray(cfg.bots) && cfg.bots.length > 0
+    ? cfg.bots
+    : cfg.telegramBotToken
+      ? [{ id: "default", telegramBotToken: cfg.telegramBotToken, webhookPath: "/telegram-webhook" }]
+      : null;
+  if (!bots || bots.length === 0) {
+    throw new Error("config.json: bots 배열 또는 telegramBotToken이 필요합니다");
+  }
+  for (const b of bots) {
+    if (!b.telegramBotToken) throw new Error(`config.json: bots[].telegramBotToken 누락 (id=${b.id || "?"})`);
+  }
+
   // OpenAI 또는 Gemini API 키 중 하나는 필수
   if (!cfg.openaiApiKey && !cfg.geminiApiKey) {
     throw new Error("config.json: openaiApiKey 또는 geminiApiKey 중 하나는 필수입니다");
@@ -24,7 +36,8 @@ function loadConfig() {
   const webhookCfg = telegramCfg.webhook || {};
 
   return {
-    telegramBotToken: cfg.telegramBotToken,
+    bots,
+    telegramBotToken: bots[0]?.telegramBotToken, // 레거시 호환
     openaiApiKey: cfg.openaiApiKey || null,
     geminiApiKey: cfg.geminiApiKey || null,
     // allowedChatIds:
@@ -42,7 +55,7 @@ function loadConfig() {
     maxInputChars: Number.isFinite(cfg.maxInputChars) ? cfg.maxInputChars : 2500,
     systemPrompt:
       cfg.systemPrompt ||
-      "You are a professional translator specializing in Khmer, Vietnamese, and Korean languages. Your task is to translate any text accurately, regardless of length or complexity. Always translate the input text, even if it contains special characters, short phrases, or mixed scripts. Use simple words and clear sentence structures while preserving 100% of the original meaning. Never skip translation or return the original text unchanged. If the input is already in the target language, return it naturally without modification. Preserve emojis, line breaks, and formatting. Output only the translation without any additional commentary or quotes.",
+      "You are a translator. Translate into the requested target language. Preserve line breaks and emojis. Output only the translation.",
 
     // auto 번역 (한글<->크메르어 또는 한글<->베트남어)
     autoTranslate: cfg.autoTranslate !== false,

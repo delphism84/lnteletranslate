@@ -1,6 +1,6 @@
 const TelegramBot = require("node-telegram-bot-api");
 const { loadConfig } = require("./config");
-const { createOpenAIClient, createGeminiClient, translateText } = require("./openaiClient");
+const { createOpenAIClient, createGeminiClient, translateText, getPronunciationBreakdown } = require("./openaiClient");
 const { acquirePidLock } = require("./pidLock");
 const express = require("express");
 const https = require("https");
@@ -86,58 +86,28 @@ function detectScript(text, assumeLatinIsVietnamese = false) {
 function pickTargetLanguage(cfg, text, replyText, forcedLanguage = null) {
   if (!cfg.autoTranslate) return cfg.targetLanguage || "Korean";
 
-  const assumeLatinIsVietnamese = cfg.assumeLatinIsVietnamese !== false;
-  const script = detectScript(text, assumeLatinIsVietnamese);
+  // 번역 방향 단순화:
+  // - (의미 있는) 첫 글자 또는 본문에 한글이 포함되면: 한국어 -> (koreanTo)  (크메르 봇이면 Khmer, 베트남 봇이면 Vietnamese)
+  // - 그 외: (상대 언어) -> Korean (vietnameseTo/khmerTo 설정 사용)
+  const raw = String(text || "");
+  const trimmed = raw.trimStart();
+  // "08:00 : 정규직 ..." 처럼 숫자/기호로 시작하는 문장은 첫 글자만 보면 오판이 잦습니다.
+  // 선행 숫자/구두점/기호를 제거한 뒤 첫 글자를 보되, 본문 어디에든 한글이 있으면 한국어로 간주합니다.
+  const firstMeaningfulChar = trimmed.replace(/^[\s\p{P}\p{S}\d:]+/gu, "").slice(0, 1);
+  const startsWithHangul = /[가-힣]/.test(firstMeaningfulChar);
+  const containsHangul = /[\uAC00-\uD7A3]/.test(raw);
+  const isKoreanLike = startsWithHangul || containsHangul;
 
   // 강제 언어가 지정된 경우 (예: /언어 1로 크메르어 선택)
   if (forcedLanguage === "Khmer" || forcedLanguage === "khmer") {
-    // 한글 입력이면 크메르어로 번역, 크메르어 입력이면 한글로 번역
-    if (script === "hangul") return "Khmer"; // 한글 -> 크메르어
-    if (script === "khmer") return cfg.khmerTo || "Korean"; // 크메르어 -> 한글
-    // 기타 경우에도 크메르어로 번역
-    return "Khmer";
+    return isKoreanLike ? "Khmer" : (cfg.khmerTo || "Korean");
   }
   if (forcedLanguage === "Vietnamese" || forcedLanguage === "vietnamese") {
-    // 한글 입력이면 베트남어로 번역, 베트남어 입력이면 한글로 번역
-    if (script === "hangul") return cfg.koreanTo || "Vietnamese"; // 한글 -> 베트남어
-    if (script === "vietnamese") return cfg.vietnameseTo || "Korean"; // 베트남어 -> 한글
-    // 기타 경우에도 베트남어로 번역
-    return cfg.koreanTo || "Vietnamese";
+    return isKoreanLike ? (cfg.koreanTo || "Vietnamese") : (cfg.vietnameseTo || "Korean");
   }
 
-  // 자동 감지 모드
-  if (script === "hangul") return cfg.koreanTo; // 한글 -> 베트남어
-  if (script === "vietnamese") return cfg.vietnameseTo || "Korean"; // 베트남어 -> 한글
-  if (script === "khmer") return cfg.khmerTo || "Korean"; // 크메르어 -> 한글
-
-  // 답글(Reply)이 있고 현재 메시지가 애매하면, "답글 대상 메시지"를 기준으로 방향을 추정합니다.
-  // 답글이 있으면 더 적극적으로 답글의 언어를 기준으로 판단
-  if (typeof replyText === "string" && replyText.trim()) {
-    const replyScript = detectScript(replyText, assumeLatinIsVietnamese);
-    
-    // 답글의 언어가 명확하면 그것을 기준으로 판단
-    if (replyScript === "hangul") {
-      // 답글이 한글이면, 현재 메시지는 베트남어/크메르어일 가능성이 높음 -> 한글로 번역
-      return cfg.vietnameseTo || cfg.khmerTo || "Korean";
-    }
-    if (replyScript === "vietnamese") {
-      // 답글이 베트남어면, 현재 메시지는 한글일 가능성이 높음 -> 베트남어로 번역
-      return cfg.koreanTo || "Vietnamese";
-    }
-    if (replyScript === "khmer") {
-      // 답글이 크메르어면, 현재 메시지는 한글일 가능성이 높음 -> 크메르어로 번역
-      return cfg.koreanTo || "Khmer";
-    }
-    
-    // 답글도 감지가 안 되면, 답글의 텍스트 길이와 패턴으로 추정
-    // 짧은 답글(예: "네", "yes", "ok")은 한글일 가능성이 높음
-    if (replyText.length <= 10 && /^[가-힣\s]+$/.test(replyText)) {
-      return cfg.vietnameseTo || cfg.khmerTo || "Korean";
-    }
-  }
-
-  // 섞였거나 애매하면, 기존 targetLanguage로 fallback
-  return cfg.targetLanguage || "Korean";
+  if (isKoreanLike) return cfg.koreanTo; // 한국어 -> (koreanTo)
+  return cfg.vietnameseTo || cfg.khmerTo || "Korean"; // 그 외 -> Korean
 }
 
 function clampText(text, maxChars) {
@@ -243,48 +213,16 @@ async function safeSendMessage(bot, chatId, text, options = {}) {
   throw lastErr;
 }
 
-async function main() {
-  const lock = acquirePidLock();
-  if (!lock.acquired) {
-    console.error(
-      `[tele-translate] already running (pid=${lock.existingPid}). ` +
-        "다른 창/서비스에서 실행 중인 봇을 먼저 종료하세요."
-    );
-    process.exit(1);
-  }
-
-  const cfg = loadConfig();
-
-  const request = cfg.telegram?.proxyUrl ? { proxy: cfg.telegram.proxyUrl } : undefined;
-  const mode = (cfg.telegram?.mode || "polling").toLowerCase();
-
-  // polling은 네트워크 제한(방화벽/ISP/회사망)에서 자주 끊길 수 있습니다.
-  // 그런 환경에서는 proxyUrl을 주거나, webhook(이벤트) 모드로 전환할 수 있습니다.
-  const bot =
-    mode === "polling"
-      ? new TelegramBot(cfg.telegramBotToken, { polling: true, request })
-      : new TelegramBot(cfg.telegramBotToken, { request });
-  
-  // AI 클라이언트 생성 (Gemini 또는 OpenAI)
-  const client = cfg.openaiApiKey ? createOpenAIClient(cfg.openaiApiKey) : null;
-  const geminiClient = cfg.geminiApiKey ? createGeminiClient(cfg.geminiApiKey) : null;
+function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences, recognitionModelPreferences, pronunciationPreferences, conversationHistory, botId }) {
+  const logPrefix = botId ? `[${botId}] ` : "";
 
   bot.on("polling_error", (err) => {
-    // 네트워크가 잠깐 끊기면 ECONNRESET이 종종 납니다.
-    // node-telegram-bot-api는 기본적으로 재시도하니, 여기서는 로깅만 하고 끝냅니다.
-    console.error("[tele-translate] polling_error:", err?.message || err);
+    console.error(`${logPrefix}[tele-translate] polling_error:`, err?.message || err);
   });
-
-  // 언어 선택 저장 (chatId별로)
-  const languagePreferences = {};
-  // 인식모델(= 번역/LLM 모델) 선택 저장 (chatId별로)
-  // - 1: Gemini (기본, 실패 시 gpt-5.2 폴백)
-  // - 2: gpt-5.2 강제
-  const recognitionModelPreferences = {};
 
   bot.on("message", async (msg) => {
     try {
-      console.log(`[message] Received message from chat ${msg.chat.id}, message_id: ${msg.message_id}`);
+      console.log(`${logPrefix}[message] Received message from chat ${msg.chat.id}, message_id: ${msg.message_id}`);
       
       const chatId = msg.chat.id;
       let forcedLanguage = null;
@@ -311,7 +249,7 @@ async function main() {
       
       if (!shouldProcessMessage(msg, cfg)) {
         const reason = isEmojiOnly(msg.text) ? "emoji-only" : "filtered";
-        console.log(`[message] Message filtered out (reason: ${reason}, chatId: ${msg.chat.id}, text: ${msg.text?.substring(0, 50)})`);
+        console.log(`${logPrefix}[message] Message filtered out (reason: ${reason}, chatId: ${msg.chat.id}, text: ${msg.text?.substring(0, 50)})`);
         return;
       }
 
@@ -326,9 +264,10 @@ async function main() {
             : null);
       }
       const targetLanguage = pickTargetLanguage(cfg, original, replyText, forcedLanguage);
+      const prior = (conversationHistory?.[chatId] || []).slice(-3);
 
       const script = detectScript(original, cfg.assumeLatinIsVietnamese !== false);
-      console.log(`[message] Processing: "${original.substring(0, 50)}..." => ${targetLanguage}${forcedLanguage ? ` (forced: ${forcedLanguage})` : ''} [script: ${script}${replyText ? `, reply: "${replyText.substring(0, 30)}..."` : ''}]`);
+      console.log(`${logPrefix}[message] Processing: "${original.substring(0, 50)}..." => ${targetLanguage}${forcedLanguage ? ` (forced: ${forcedLanguage})` : ''} [script: ${script}${replyText ? `, reply: "${replyText.substring(0, 30)}..."` : ''}]`);
 
       const resolvedModel =
         forcedRecognitionModel === 2 ? "gpt-5.2" : cfg.model;
@@ -338,14 +277,14 @@ async function main() {
       // (텔레그램 업데이트 재전송/재시작 시 케이스 대비)
       const key = `${chatId}:${msg.message_id}`;
       if (main._seen?.has(key)) {
-        console.log(`[message] Duplicate message ignored: ${key}`);
+        console.log(`${logPrefix}[message] Duplicate message ignored: ${key}`);
         return;
       }
       if (!main._seen) main._seen = new Set();
       main._seen.add(key);
       if (main._seen.size > 3000) main._seen.clear();
 
-      console.log(`[message] Translating to ${targetLanguage}...`);
+      console.log(`${logPrefix}[message] Translating to ${targetLanguage}...`);
       const translated = await translateText({
         client,
         geminiClient,
@@ -354,10 +293,11 @@ async function main() {
         systemPrompt: cfg.systemPrompt,
         targetLanguage,
         text: original,
+        contextMessages: prior,
       });
 
       if (!translated || !translated.trim()) {
-        console.log(`[message] Translation returned empty, skipping`);
+        console.log(`${logPrefix}[message] Translation returned empty, skipping`);
         return;
       }
 
@@ -365,24 +305,65 @@ async function main() {
       const translatedClean = translated.trim();
       const originalClean = original.trim();
       if (translatedClean === originalClean && script !== "unknown") {
-        console.log(`[message] Translation result same as original, may be translation failure`);
+        console.log(`${logPrefix}[message] Translation result same as original, may be translation failure`);
         // 원문과 같으면 번역 실패로 간주하고 재시도하지 않음 (무한 루프 방지)
         return;
       }
 
-      console.log(`[message] Translation result: "${translated.substring(0, 50)}..."`);
+      console.log(`${logPrefix}[message] Translation result: "${translated.substring(0, 50)}..."`);
       await safeSendMessage(bot, chatId, translated, {
         reply_to_message_id: msg.message_id,
         disable_web_page_preview: true,
       });
-      console.log(`[message] Message sent successfully`);
+      console.log(`${logPrefix}[message] Message sent successfully`);
+
+      // 최근 대화 저장 (다음 메시지 번역 컨텍스트용)
+      if (conversationHistory) {
+        if (!conversationHistory[chatId]) conversationHistory[chatId] = [];
+        conversationHistory[chatId].push(original);
+        if (conversationHistory[chatId].length > 20) {
+          conversationHistory[chatId] = conversationHistory[chatId].slice(-20);
+        }
+      }
+
+      // 발음 옵션: 크메르→한국어 또는 한국어→크메르어일 때 단어별 발음(뜻) 추가 전송
+      const pronunciationOn = !!pronunciationPreferences[chatId];
+      const isKhmerToKorean = targetLanguage === "Korean" && script === "khmer";
+      const isKoreanToKhmer = targetLanguage === "Khmer" && script === "hangul";
+      const willSendPronunciation = pronunciationOn && (isKhmerToKorean || isKoreanToKhmer);
+      const pronunciationInputText = isKoreanToKhmer ? translated : original; // 한→크메르면 번역문(크메르어) 기준으로 발음
+      console.log(`${logPrefix}[message] pronunciation check: chatId=${chatId} on=${pronunciationOn} targetLang=${targetLanguage} script=${script} => ${willSendPronunciation ? "will send" : "skip"}`);
+      if (willSendPronunciation) {
+        try {
+          console.log(`${logPrefix}[API] getPronunciationBreakdown start textLen=${pronunciationInputText.length}`);
+          const pronunciationLine = await getPronunciationBreakdown({
+            client,
+            geminiClient,
+            model: resolvedModel,
+            fallbackModel: resolvedFallbackModel,
+            text: pronunciationInputText,
+          });
+          console.log(`${logPrefix}[API] getPronunciationBreakdown done resultLen=${(pronunciationLine || "").length} preview=${(pronunciationLine || "").substring(0, 60)}...`);
+          if (pronunciationLine) {
+            await safeSendMessage(bot, chatId, pronunciationLine, {
+              reply_to_message_id: msg.message_id,
+              disable_web_page_preview: true,
+            });
+            console.log(`${logPrefix}[message] Pronunciation line sent`);
+          } else {
+            console.warn(`${logPrefix}[message] Pronunciation line empty, not sending`);
+          }
+        } catch (pronErr) {
+          console.error(`${logPrefix}[message] Pronunciation breakdown failed:`, pronErr?.message || pronErr, pronErr?.stack);
+        }
+      }
     } catch (err) {
       // 에러 객체 전체를 찍으면 request/response 덤프가 너무 커서 로그가 오히려 보기 어려워집니다.
       console.error(
-        `[message] Error processing message: ${err?.code || ""} ${err?.message || err}`
+        `${logPrefix}[message] Error processing message: ${err?.code || ""} ${err?.message || err}`
       );
       if (err?.response?.body?.description) {
-        console.error(`[message] Telegram description: ${err.response.body.description}`);
+        console.error(`${logPrefix}[message] Telegram description: ${err.response.body.description}`);
       }
     }
   });
@@ -427,6 +408,42 @@ async function main() {
       }
     } catch (err) {
       console.error(`[언어] failed: ${err?.code || ""} ${err?.message || err}`);
+    }
+  });
+
+  // 발음 옵션: 1=켜기(크메르→한국어 시 단어별 발음·뜻 추가 전송), 0=끄기
+  bot.onText(/\/발음\s*(\d+)?/, async (msg, match) => {
+    try {
+      const chatId = msg.chat.id;
+      const opt = match[1] != null ? parseInt(match[1], 10) : null;
+      console.log(`${logPrefix}[발음] command received chatId=${chatId} opt=${opt}`);
+
+      if (opt === 1) {
+        pronunciationPreferences[chatId] = true;
+        console.log(`${logPrefix}[발음] pronunciation ON for chat ${chatId}`);
+        await safeSendMessage(
+          bot,
+          chatId,
+          "발음 옵션이 켜졌습니다. 크메르어 → 한국어 번역 시 단어별 발음과 뜻을 추가로 보내드립니다.\n예: 니(너) 찌어(xx) 츄모(이름) 어바이(뭐니?)",
+          { reply_to_message_id: msg.message_id }
+        );
+      } else if (opt === 0) {
+        delete pronunciationPreferences[chatId];
+        console.log(`${logPrefix}[발음] pronunciation OFF for chat ${chatId}`);
+        await safeSendMessage(bot, chatId, "발음 옵션이 꺼졌습니다.", {
+          reply_to_message_id: msg.message_id,
+        });
+      } else {
+        const on = pronunciationPreferences[chatId];
+        await safeSendMessage(
+          bot,
+          chatId,
+          "발음 옵션:\n/발음 1 - 켜기 (크메르어→한국어 시 단어별 발음·뜻 추가)\n/발음 0 - 끄기\n\n현재: " + (on ? "켜짐" : "꺼짐"),
+          { reply_to_message_id: msg.message_id }
+        );
+      }
+    } catch (err) {
+      console.error(`${logPrefix}[발음] failed:`, err?.message || err, err?.stack);
     }
   });
 
@@ -490,9 +507,53 @@ async function main() {
         { reply_to_message_id: msg.message_id }
       );
     } catch (err) {
-      console.error(`[인식모델] failed: ${err?.code || ""} ${err?.message || err}`);
+      console.error(`${logPrefix}[인식모델] failed: ${err?.code || ""} ${err?.message || err}`);
     }
   });
+}
+
+async function main() {
+  const lock = acquirePidLock();
+  if (!lock.acquired) {
+    console.error(
+      `[tele-translate] already running (pid=${lock.existingPid}). ` +
+        "다른 창/서비스에서 실행 중인 봇을 먼저 종료하세요."
+    );
+    process.exit(1);
+  }
+
+  const cfg = loadConfig();
+  const request = cfg.telegram?.proxyUrl ? { proxy: cfg.telegram.proxyUrl } : undefined;
+  const mode = (cfg.telegram?.mode || "polling").toLowerCase();
+
+  const client = cfg.openaiApiKey ? createOpenAIClient(cfg.openaiApiKey) : null;
+  const geminiClient = cfg.geminiApiKey ? createGeminiClient(cfg.geminiApiKey) : null;
+  const languagePreferences = {};
+  const recognitionModelPreferences = {};
+  const pronunciationPreferences = {};
+  const conversationHistory = {};
+
+  const botInstances = [];
+  const usePolling = mode === "polling";
+  if (usePolling && cfg.bots.length > 1) {
+    throw new Error("멀티봇(4개)은 webhook 모드만 지원합니다. config.json에서 telegram.mode를 webhook으로 설정하세요.");
+  }
+  for (const b of cfg.bots) {
+    const bot = new TelegramBot(b.telegramBotToken, {
+      request,
+      polling: usePolling && cfg.bots.length === 1,
+    });
+    setupBotHandlers(bot, cfg, {
+      client,
+      geminiClient,
+      languagePreferences,
+      recognitionModelPreferences,
+      pronunciationPreferences,
+      conversationHistory,
+      botId: b.id || b.webhookPath?.replace(/^\/telegram-webhook-?/, "") || "bot",
+    });
+    botInstances.push({ bot, webhookPath: b.webhookPath || "/telegram-webhook" });
+  }
 
   if (mode === "webhook") {
     const webhook = cfg.telegram?.webhook || {};
@@ -502,41 +563,32 @@ async function main() {
         'telegram.mode="webhook" 인데 telegram.webhook.publicUrl 이 없습니다. (예: https://xxxx.ngrok-free.app)'
       );
     }
-
-    const path = webhook.path || "/telegram-webhook";
-    const fullUrl = String(publicUrl).replace(/\/+$/, "") + path;
+    const baseUrl = String(publicUrl).replace(/\/+$/, "");
 
     const app = express();
     app.use(express.json({ limit: "2mb" }));
-    
-    // 요청 로깅 미들웨어
     app.use((req, res, next) => {
       console.log(`[webhook] ${req.method} ${req.path} from ${req.ip}`);
       next();
     });
-    
-    app.post(path, (req, res) => {
-      const update = req.body;
-      console.log(`[webhook] Received update ID: ${update.update_id}`);
-      
-      if (update.message) {
-        console.log(`[webhook] Message from chat ${update.message.chat.id}, text: "${update.message.text?.substring(0, 50)}"`);
-      } else {
-        console.log(`[webhook] Update type: ${Object.keys(update).filter(k => k !== 'update_id').join(', ')}`);
-      }
-      
-      try {
-        bot.processUpdate(update);
-        console.log(`[webhook] Update ${update.update_id} processed successfully`);
-        res.sendStatus(200);
-      } catch (err) {
-        console.error(`[webhook] Error processing update ${update.update_id}:`, err);
-        console.error(`[webhook] Error stack:`, err.stack);
-        res.status(500).send('Error processing update');
-      }
-    });
 
-    await bot.setWebHook(fullUrl);
+    for (const { bot, webhookPath } of botInstances) {
+      const path = webhookPath.startsWith("/") ? webhookPath : "/" + webhookPath;
+      app.post(path, (req, res) => {
+        const update = req.body;
+        console.log(`[webhook] ${path} update ID: ${update?.update_id}`);
+        try {
+          bot.processUpdate(update);
+          res.sendStatus(200);
+        } catch (err) {
+          console.error(`[webhook] ${path} Error:`, err?.message || err);
+          res.status(500).send("Error processing update");
+        }
+      });
+      const fullUrl = baseUrl + path;
+      await bot.setWebHook(fullUrl);
+      console.log(`[tele-translate] webhook set: ${fullUrl}`);
+    }
 
     const host = webhook.host || "127.0.0.1";
     const port = webhook.port || 58010;
@@ -550,14 +602,11 @@ async function main() {
         key: fs.readFileSync(keyPath),
       };
       https.createServer(options, app).listen(port, host, () => {
-        console.log(`[tele-translate] HTTPS webhook server listening on https://${host}:${port}${path}`);
-        console.log(`[tele-translate] webhook set: ${fullUrl}`);
+        console.log(`[tele-translate] HTTPS webhook server listening on https://${host}:${port} (${botInstances.length} bots)`);
       });
     } else {
-      // 인증서가 없으면 HTTP로 시작 (개발용)
       app.listen(port, host, () => {
-        console.log(`[tele-translate] HTTP webhook server listening on http://${host}:${port}${path}`);
-        console.log(`[tele-translate] webhook set: ${fullUrl}`);
+        console.log(`[tele-translate] HTTP webhook server listening on http://${host}:${port} (${botInstances.length} bots)`);
         if (!certPath || !keyPath) {
           console.warn(`[tele-translate] 경고: 인증서 경로가 설정되지 않았습니다. HTTPS를 사용하려면 certPath와 keyPath를 설정하세요.`);
         } else {

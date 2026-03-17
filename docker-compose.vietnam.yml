@@ -4,8 +4,8 @@ services:
     container_name: lnteletranslate-vietnam
     restart: unless-stopped
     volumes:
-      # config.json 파일 마운트 (베트남 설정)
-      - ./configs/viet.example.json:/app/config.json:ro
+      # config.json 파일 마운트 (실운영 설정)
+      - ../lnteletranslate_vietnam/config.json:/app/config.json:ro
       - ./data/vietnam:/app/data
       # SSL 인증서 마운트 (webhook 모드일 때)
       - /etc/letsencrypt:/etc/letsencrypt:ro

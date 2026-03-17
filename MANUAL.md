@@ -258,7 +258,57 @@ sudo ./scripts/setup-cron.sh
 - 크메르어 봇: 포트 64000 (webhook 모드)
 - 베트남어 봇: 포트 64001 (webhook 모드)
 
-포트가 충돌하면 `config.json`에서 포트 번호를 변경하세요.
+#### 중요: "도커 컨테이너"와 "systemd 단일 프로세스"를 동시에 띄우지 마세요
+
+최근 장애 사례처럼, 아래 두 가지를 **동시에** 올리면 크메르 포트가 충돌(`EADDRINUSE`)합니다.
+
+- **Docker Compose 컨테이너**: `lnteletranslate-khmer` 가 기본적으로 `0.0.0.0:64000`을 사용
+- **systemd 단일 서비스**: `/etc/systemd/system/lnteletranslate.service` (node로 직접 실행)도 `64000`을 사용하도록 설정된 경우가 많음
+
+즉, **운영 방식은 둘 중 하나만 선택**하세요.
+
+- **권장(2개 봇 동시 운영)**: Docker Compose(`./scripts/docker-start.sh`)만 사용
+- **단일 봇/단일 프로세스 운영**: systemd 단일 서비스만 사용(이 경우 도커 컨테이너는 내려둠)
+
+#### 충돌 점검(1분 체크)
+
+```bash
+# 1) 64000 포트 점유 프로세스 확인
+ss -ltnp 'sport = :64000'
+
+# 2) 크메르 컨테이너가 떠있는지 확인
+docker ps --filter 'name=lnteletranslate-khmer'
+
+# 3) systemd 단일 서비스 상태 확인
+systemctl status lnteletranslate.service --no-pager
+```
+
+`ss` 출력에 `docker-proxy`가 보이면 보통 **도커 컨테이너가 포트를 잡고 있는 상태**입니다.
+
+#### 충돌 복구(권장 시나리오별)
+
+**A) Docker로 크메르/베트남 2개를 운영할 때(권장)**
+
+```bash
+# systemd 단일 서비스를 내립니다(포트 64000 반환)
+sudo systemctl stop lnteletranslate.service
+```
+
+**B) systemd 단일 서비스로 크메르를 운영할 때**
+
+```bash
+# 도커 크메르 컨테이너를 내립니다(포트 64000 반환)
+docker stop lnteletranslate-khmer
+
+# 그 다음 systemd 서비스를 올립니다
+sudo systemctl start lnteletranslate.service
+```
+
+#### 포트를 바꿔서 공존시키고 싶다면(비권장)
+
+가능은 하지만 운영/문서/리버스프록시/웹훅 URL까지 함께 정리해야 해서 실수 포인트가 많습니다.
+정말 필요하면 **크메르의 webhook 포트(예: 64000)와 관련된 nginx/텔레그램 webhook 경로까지** 일괄 변경해야 합니다.
+*** End of File
 
 ## 추가 리소스
 

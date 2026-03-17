@@ -4,8 +4,8 @@ services:
     container_name: lnteletranslate-khmer
     restart: unless-stopped
     volumes:
-      # config.json 파일 마운트 (크메르 설정)
-      - ./configs/khmer.example.json:/app/config.json:ro
+      # config.json 파일 마운트 (실운영 설정)
+      - ./config.json:/app/config.json:ro
       # 데이터/로그(필요 시 사용)
       - ./data/khmer:/app/data
       # SSL 인증서 마운트 (webhook 모드일 때)
@@ -20,8 +20,8 @@ services:
     container_name: lnteletranslate-vietnam
     restart: unless-stopped
     volumes:
-      # config.json 파일 마운트 (베트남 설정)
-      - ./configs/viet.example.json:/app/config.json:ro
+      # config.json 파일 마운트 (실운영 설정)
+      - ../lnteletranslate_vietnam/config.json:/app/config.json:ro
       # 데이터/로그(필요 시 사용)
       - ./data/vietnam:/app/data
       # SSL 인증서 마운트 (webhook 모드일 때)
