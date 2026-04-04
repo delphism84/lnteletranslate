@@ -1,0 +1,17 @@
+services:
+  lnteletranslate-tra:
+    build: .
+    container_name: lnteletranslate-tra
+    restart: unless-stopped
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./data/tra:/app/data
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    ports:
+      - "64002:64002"
+    networks:
+      - translate-network
+
+networks:
+  translate-network:
+    driver: bridge

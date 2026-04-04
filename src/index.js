@@ -213,7 +213,8 @@ async function safeSendMessage(bot, chatId, text, options = {}) {
   throw lastErr;
 }
 
-function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences, recognitionModelPreferences, pronunciationPreferences, conversationHistory, botId }) {
+function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences, recognitionModelPreferences, pronunciationPreferences, conversationHistory, botId, systemPrompt }) {
+  const resolvedSystemPrompt = systemPrompt || cfg.systemPrompt;
   const logPrefix = botId ? `[${botId}] ` : "";
 
   bot.on("polling_error", (err) => {
@@ -290,7 +291,7 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
         geminiClient,
         model: resolvedModel,
         fallbackModel: resolvedFallbackModel,
-        systemPrompt: cfg.systemPrompt,
+        systemPrompt: resolvedSystemPrompt,
         targetLanguage,
         text: original,
         contextMessages: prior,
@@ -543,6 +544,8 @@ async function main() {
       request,
       polling: usePolling && cfg.bots.length === 1,
     });
+    const extra = typeof b.systemPromptExtra === "string" ? b.systemPromptExtra.trim() : "";
+    const mergedSystemPrompt = extra ? `${cfg.systemPrompt}\n\n${extra}` : cfg.systemPrompt;
     setupBotHandlers(bot, cfg, {
       client,
       geminiClient,
@@ -551,6 +554,7 @@ async function main() {
       pronunciationPreferences,
       conversationHistory,
       botId: b.id || b.webhookPath?.replace(/^\/telegram-webhook-?/, "") || "bot",
+      systemPrompt: mergedSystemPrompt,
     });
     botInstances.push({ bot, webhookPath: b.webhookPath || "/telegram-webhook" });
   }
