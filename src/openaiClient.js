@@ -46,15 +46,37 @@ async function translateWithGemini({ geminiClient, model, systemPrompt, targetLa
 
   const prompt = `${(systemPrompt || "").trim()}\n\n${buildTranslationPrompt({ targetLanguage, text, contextMessages })}`.trim();
 
-  const result = await geminiModel.generateContent(prompt);
-  const response = await result.response;
-  const translated = response.text().trim();
-  return translated || "";
+  const resolvedModel = model === "gemini" ? "gemini-1.5-pro" : model;
+  const t0 = Date.now();
+  try {
+    const result = await geminiModel.generateContent(prompt);
+    const response = await result.response;
+    const translated = response.text().trim();
+    const ms = Date.now() - t0;
+    console.log("[API] translateWithGemini", {
+      ms,
+      model: resolvedModel,
+      targetLanguage,
+      textLen: (text || "").length,
+      outLen: translated.length,
+    });
+    return translated || "";
+  } catch (e) {
+    const ms = Date.now() - t0;
+    console.warn("[API] translateWithGemini error", {
+      ms,
+      model: resolvedModel,
+      targetLanguage,
+      err: e?.message || String(e),
+    });
+    throw e;
+  }
 }
 
 async function translateWithOpenAI({ client, model, systemPrompt, targetLanguage, text, contextMessages }) {
   if (!client) throw new Error("OpenAI client not configured");
 
+  const t0 = Date.now();
   const resp = await client.chat.completions.create({
     model,
     temperature: 0.1,
@@ -68,6 +90,14 @@ async function translateWithOpenAI({ client, model, systemPrompt, targetLanguage
   });
 
   const out = resp?.choices?.[0]?.message?.content?.trim();
+  const ms = Date.now() - t0;
+  console.log("[API] translateWithOpenAI", {
+    ms,
+    model,
+    targetLanguage,
+    textLen: (text || "").length,
+    outLen: (out || "").length,
+  });
   return out || "";
 }
 
@@ -84,15 +114,18 @@ async function generateWithCustomPrompt({ client, geminiClient, model, fallbackM
         generationConfig: { temperature: 0.1 },
       });
       const prompt = `${(systemPrompt || "").trim()}\n\n${(userContent || "").trim()}`.trim();
+      const t0 = Date.now();
       const result = await geminiModel.generateContent(prompt);
       const response = await result.response;
       const out = response.text().trim();
-      console.log("[API] generateWithCustomPrompt Gemini ok", { outLen: out.length });
+      const ms = Date.now() - t0;
+      console.log("[API] generateWithCustomPrompt Gemini ok", { ms, outLen: out.length });
       if (out) return out;
       throw new Error("Gemini returned empty");
     } catch (e) {
       console.warn("[API] generateWithCustomPrompt Gemini error", e?.message || e);
       if (client) {
+        const t0 = Date.now();
         const resp = await client.chat.completions.create({
           model: fallback,
           temperature: 0.1,
@@ -102,13 +135,15 @@ async function generateWithCustomPrompt({ client, geminiClient, model, fallbackM
           ],
         });
         const out = resp?.choices?.[0]?.message?.content?.trim() || "";
-        console.log("[API] generateWithCustomPrompt OpenAI fallback ok", { outLen: out.length });
+        const ms = Date.now() - t0;
+        console.log("[API] generateWithCustomPrompt OpenAI fallback ok", { ms, outLen: out.length });
         return out;
       }
       throw e;
     }
   }
   if (client) {
+    const t0 = Date.now();
     const resp = await client.chat.completions.create({
       model: primaryModel,
       temperature: 0.1,
@@ -118,7 +153,8 @@ async function generateWithCustomPrompt({ client, geminiClient, model, fallbackM
       ],
     });
     const out = resp?.choices?.[0]?.message?.content?.trim() || "";
-    console.log("[API] generateWithCustomPrompt OpenAI ok", { outLen: out.length });
+    const ms = Date.now() - t0;
+    console.log("[API] generateWithCustomPrompt OpenAI ok", { ms, outLen: out.length });
     return out;
   }
   console.warn("[API] generateWithCustomPrompt no client");

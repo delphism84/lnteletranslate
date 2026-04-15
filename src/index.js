@@ -544,8 +544,13 @@ async function main() {
       request,
       polling: usePolling && cfg.bots.length === 1,
     });
+    const overwrite = typeof b.systemPromptOverwrite === "string" ? b.systemPromptOverwrite.trim() : "";
     const extra = typeof b.systemPromptExtra === "string" ? b.systemPromptExtra.trim() : "";
-    const mergedSystemPrompt = extra ? `${cfg.systemPrompt}\n\n${extra}` : cfg.systemPrompt;
+    const mergedSystemPrompt = overwrite
+      ? overwrite
+      : extra
+        ? `${cfg.systemPrompt}\n\n${extra}`
+        : cfg.systemPrompt;
     setupBotHandlers(bot, cfg, {
       client,
       geminiClient,
