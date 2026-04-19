@@ -126,4 +126,10 @@ npm run start
 - 번역은 비용이 발생할 수 있어요. `allowedChatIds`로 제한하는 걸 추천합니다.
 - Webhook 모드 사용 시 포트 58010이 외부에서 접근 가능해야 합니다 (방화벽 설정 확인).
 
+### tra 스택 재시작 (Docker)
 
+`config.json` 등 설정을 바꾼 뒤 프로세스에 반영하려면 프로젝트 루트에서:
+
+```bash
+docker compose -f docker-compose.tra.yml restart
+```
