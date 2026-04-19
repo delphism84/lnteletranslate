@@ -213,7 +213,7 @@ async function safeSendMessage(bot, chatId, text, options = {}) {
   throw lastErr;
 }
 
-function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences, recognitionModelPreferences, pronunciationPreferences, conversationHistory, botId, systemPrompt }) {
+function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences, recognitionModelPreferences, pronunciationPreferences, botId, systemPrompt }) {
   const resolvedSystemPrompt = systemPrompt || cfg.systemPrompt;
   const logPrefix = botId ? `[${botId}] ` : "";
 
@@ -265,7 +265,6 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
             : null);
       }
       const targetLanguage = pickTargetLanguage(cfg, original, replyText, forcedLanguage);
-      const prior = (conversationHistory?.[chatId] || []).slice(-3);
 
       const script = detectScript(original, cfg.assumeLatinIsVietnamese !== false);
       console.log(`${logPrefix}[message] Processing: "${original.substring(0, 50)}..." => ${targetLanguage}${forcedLanguage ? ` (forced: ${forcedLanguage})` : ''} [script: ${script}${replyText ? `, reply: "${replyText.substring(0, 30)}..."` : ''}]`);
@@ -294,7 +293,6 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
         systemPrompt: resolvedSystemPrompt,
         targetLanguage,
         text: original,
-        contextMessages: prior,
       });
 
       if (!translated || !translated.trim()) {
@@ -317,15 +315,6 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
         disable_web_page_preview: true,
       });
       console.log(`${logPrefix}[message] Message sent successfully`);
-
-      // 최근 대화 저장 (다음 메시지 번역 컨텍스트용)
-      if (conversationHistory) {
-        if (!conversationHistory[chatId]) conversationHistory[chatId] = [];
-        conversationHistory[chatId].push(original);
-        if (conversationHistory[chatId].length > 20) {
-          conversationHistory[chatId] = conversationHistory[chatId].slice(-20);
-        }
-      }
 
       // 발음 옵션: 크메르→한국어 또는 한국어→크메르어일 때 단어별 발음(뜻) 추가 전송
       const pronunciationOn = !!pronunciationPreferences[chatId];
@@ -532,7 +521,6 @@ async function main() {
   const languagePreferences = {};
   const recognitionModelPreferences = {};
   const pronunciationPreferences = {};
-  const conversationHistory = {};
 
   const botInstances = [];
   const usePolling = mode === "polling";
@@ -557,7 +545,6 @@ async function main() {
       languagePreferences,
       recognitionModelPreferences,
       pronunciationPreferences,
-      conversationHistory,
       botId: b.id || b.webhookPath?.replace(/^\/telegram-webhook-?/, "") || "bot",
       systemPrompt: mergedSystemPrompt,
     });

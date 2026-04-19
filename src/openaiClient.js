@@ -1,22 +1,10 @@
 const OpenAI = require("openai");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-function buildTranslationPrompt({ targetLanguage, text, contextMessages = [] }) {
+function buildTranslationPrompt({ targetLanguage, text }) {
   // 프롬프트 단순화 버전 (사용자가 테스트할 때 "원문 + 번역" 형태로도 잘 동작하는 수준)
   // - 너무 많은 규칙/금지사항 대신, 최소한의 품질/안전 가드만 남깁니다.
-  const ctx = Array.isArray(contextMessages) ? contextMessages.filter(Boolean).slice(-3) : [];
-  const ctxBlock =
-    ctx.length > 0
-      ? "최근 대화 3개(참고만, 번역하지 말 것):\n" +
-        ctx
-          .map((m) => String(m))
-          .map((m) => (m.length > 220 ? m.slice(0, 220) + "…" : m))
-          .map((m, i) => `${i + 1}) ${m}`)
-          .join("\n") +
-        "\n\n"
-      : "";
   return (
-    ctxBlock +
     `${targetLanguage}로 번역.\n` +
     `번역문만 출력.\n` +
     `줄바꿈/이모지 유지.\n` +
@@ -34,7 +22,7 @@ function createGeminiClient(apiKey) {
   return new GoogleGenerativeAI(apiKey);
 }
 
-async function translateWithGemini({ geminiClient, model, systemPrompt, targetLanguage, text, contextMessages }) {
+async function translateWithGemini({ geminiClient, model, systemPrompt, targetLanguage, text }) {
   if (!geminiClient) throw new Error("Gemini client not configured");
 
   const geminiModel = geminiClient.getGenerativeModel({
@@ -44,7 +32,7 @@ async function translateWithGemini({ geminiClient, model, systemPrompt, targetLa
     },
   });
 
-  const prompt = `${(systemPrompt || "").trim()}\n\n${buildTranslationPrompt({ targetLanguage, text, contextMessages })}`.trim();
+  const prompt = `${(systemPrompt || "").trim()}\n\n${buildTranslationPrompt({ targetLanguage, text })}`.trim();
 
   const resolvedModel = model === "gemini" ? "gemini-1.5-pro" : model;
   const t0 = Date.now();
@@ -73,7 +61,7 @@ async function translateWithGemini({ geminiClient, model, systemPrompt, targetLa
   }
 }
 
-async function translateWithOpenAI({ client, model, systemPrompt, targetLanguage, text, contextMessages }) {
+async function translateWithOpenAI({ client, model, systemPrompt, targetLanguage, text }) {
   if (!client) throw new Error("OpenAI client not configured");
 
   const t0 = Date.now();
@@ -84,7 +72,7 @@ async function translateWithOpenAI({ client, model, systemPrompt, targetLanguage
       { role: "system", content: systemPrompt || "You are a translator. Return only the translation." },
       {
         role: "user",
-        content: buildTranslationPrompt({ targetLanguage, text, contextMessages }),
+        content: buildTranslationPrompt({ targetLanguage, text }),
       },
     ],
   });
@@ -169,7 +157,6 @@ async function translateText({
   systemPrompt,
   targetLanguage,
   text,
-  contextMessages,
 }) {
   const primaryModel = model || "gemini-2.5-flash";
   const fallback = fallbackModel || "gpt-5.2";
@@ -177,7 +164,6 @@ async function translateText({
     primaryModel,
     targetLanguage,
     textLen: (text || "").length,
-    contextCount: Array.isArray(contextMessages) ? contextMessages.length : 0,
   });
 
   // 기본: Gemini 우선
@@ -191,7 +177,6 @@ async function translateText({
         systemPrompt,
         targetLanguage,
         text,
-        contextMessages,
       });
       if (out && out.trim()) {
         console.log("[API] translateText Gemini ok", { outLen: out.trim().length });
@@ -213,7 +198,6 @@ async function translateText({
         systemPrompt,
         targetLanguage,
         text,
-        contextMessages,
       });
     }
   }
@@ -225,7 +209,6 @@ async function translateText({
     systemPrompt,
     targetLanguage,
     text,
-    contextMessages,
   });
   console.log("[API] translateText OpenAI ok", { outLen: (out || "").length });
   return out;
