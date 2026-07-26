@@ -31,8 +31,8 @@
   "maxInputChars": 8000,
   "systemPrompt": "You translate between Khmer and Korean only. Produce natural, idiomatic target text; preserve meaning, tone, emojis, line breaks, and formatting. Reply with the translation only—no preambles, notes, alternatives, or explanations.",
 
-  "promptRegisterKoreanToKhmer": "듣는 사람은 크메르어 여자 연인(애인)이다. 남자가 여자 연인에게 카톡하듯 따뜻하고 친밀한 크메르어로 번역한다. 2인칭은 상황에 맞게 អូន(연인 호칭)을 자연스럽게 쓰고, 너무 격식적이거나 딱딱한 문체는 피한다. 한국어 조건·가정(-면, -으면, -지면, -거든, -면은)은 크메르 조건(បើ, ពេល, នៅពេល, ...រួច)으로 번역하고, 아직 일어나지 않은 일을 과거/완료(ហើយ, រួចហើយ)로 쓰지 않는다. 원문이 '이미 ~했다'일 때만 완료 표현을 쓴다.",
-  "promptRegisterKhmerToKorean": "자연스러운 한국어로 번역한다. 크메르 존칭·애칭(អូន/បង 등)을 한국어 대화체에 맞게 의역한다. 부정문(កុំ)과 의문문(ទេ/អត់)의 극성을 정확히 반영한다."
+  "promptRegisterKoreanToKhmer": "자연스러운 크메르어로 번역한다. 한국어 조건·가정(-면, -으면, -지면, -거든, -면은)은 크메르 조건(បើ, ពេល, នៅពេល, ...រួច)으로 번역하고, 아직 일어나지 않은 일을 과거/완료(ហើយ, រួចហើយ)로 쓰지 않는다. 원문이 '이미 ~했다'일 때만 완료 표현을 쓴다.",
+  "promptRegisterKhmerToKorean": "자연스러운 한국어로 번역한다. 크메르 존칭·애칭(អូន/បង 등)을 한국어 대화체에 맞게 의역한다. 부정문(កុំ)과 의문문(ទេ/អត់)의 극성을 정확히 반영한다.",
+  "romanticKhmerRegister": true
 }
-
 

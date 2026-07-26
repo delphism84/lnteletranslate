@@ -6,4 +6,5 @@ configs/*/config.json
 data/
 *.log
 .tele-translate.pid
+certs/
 

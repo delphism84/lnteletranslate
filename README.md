@@ -79,10 +79,49 @@ sudo ./scripts/setup-ssl.sh
 - certbot 설치 확인 및 설치
 - `server.lunarsystem.co.kr` 도메인에 대한 인증서 발급
 - 인증서 파일 권한 설정
+- `./certs/` 폴더에 다운로드용 zip 패키지 생성
 
 **주의사항:**
 - 인증서 발급 전에 DNS가 `server.lunarsystem.co.kr`을 서버 IP로 가리키고 있어야 합니다.
 - 포트 80이 열려있어야 합니다 (Let's Encrypt 인증용).
+
+### 1-1. PEM 생성 / 다운로드 (Linux)
+
+로컬 개발용 self-signed 또는 Let's Encrypt 내보내기:
+
+```bash
+# self-signed 생성 (기본: server.lunarsystem.co.kr)
+./scripts/generate-pem.sh
+
+# Let's Encrypt → ./certs/ 복사 + zip
+./scripts/generate-pem.sh --export
+
+# HTTP 로 zip 다운로드 (8080)
+./scripts/generate-pem.sh --serve
+```
+
+생성 결과:
+- `certs/<도메인>/fullchain.pem`, `privkey.pem`
+- `certs/<도메인>.zip` (다운로드용)
+
+### 1-2. PEM 생성 / 다운로드 (Windows)
+
+PowerShell:
+
+```powershell
+.\scripts\generate-pem.ps1
+.\scripts\generate-pem.ps1 -Domain server.lunarsystem.co.kr
+.\scripts\generate-pem.ps1 -Serve
+```
+
+또는 배치 파일:
+
+```bat
+scripts\generate-pem.bat
+scripts\generate-pem.bat -Serve
+```
+
+OpenSSL 이 없으면 Git for Windows 또는 OpenSSL 설치가 필요할 수 있습니다.
 
 ### 2. 인증서 자동 갱신 설정
 
@@ -126,14 +165,10 @@ npm run start
 - 번역은 비용이 발생할 수 있어요. `allowedChatIds`로 제한하는 걸 추천합니다.
 - Webhook 모드 사용 시 포트 58010이 외부에서 접근 가능해야 합니다 (방화벽 설정 확인).
 
-### tra 스택 (Docker, khmer와 독립)
+### tra 스택 재시작 (Docker)
 
-- 설정 파일: **`configs/tra/config.json`** (`config.example.json` 복사 후 토큰 입력). 루트 `config.json`과 **별도**입니다.
-- 컨테이너 내부·호스트 모두 **포트 64002** (`telegram.webhook.port`: `64002`).
-- Nginx에 **`/telegram-webhook-tra` → `127.0.0.1:64002`** 프록시 추가 필요. (`NGINX_WEBHOOKS.md` 참고)
+`config.json` 등 설정을 바꾼 뒤 프로세스에 반영하려면 프로젝트 루트에서:
 
 ```bash
-cp configs/tra/config.example.json configs/tra/config.json
-# configs/tra/config.json 편집 후
-docker compose -f docker-compose.tra.yml up -d --build
+docker compose -f docker-compose.tra.yml restart
 ```

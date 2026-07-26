@@ -5,6 +5,7 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOMAIN="server.lunarsystem.co.kr"
 EMAIL="admin@lunarsystem.co.kr"  # Let's Encrypt 알림용 이메일 (변경 필요)
 WEBHOOK_PORT=58010
@@ -50,6 +51,13 @@ if [ -f "$CERT_PATH" ] && [ -f "$KEY_PATH" ]; then
     sudo chmod 644 "$KEY_PATH"
     
     echo "[SSL Setup] 완료! 이제 애플리케이션을 재시작하세요."
+
+    # 다운로드용 ./certs/ 패키지 생성
+    EXPORT_SCRIPT="$SCRIPT_DIR/generate-pem.sh"
+    if [ -f "$EXPORT_SCRIPT" ]; then
+        echo "[SSL Setup] 다운로드용 PEM 패키지 생성 중..."
+        DOMAIN="$DOMAIN" bash "$EXPORT_SCRIPT" --export || echo "[SSL Setup] 경고: PEM export 실패 (수동: ./scripts/generate-pem.sh --export)"
+    fi
 else
     echo "[SSL Setup] 오류: 인증서 파일을 찾을 수 없습니다."
     exit 1
