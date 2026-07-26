@@ -1,6 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 
+const DEFAULT_PROMPT_REGISTER_KOREAN_TO_KHMER =
+  "자연스러운 크메르어로 번역한다. 한국어 조건·가정(-면, -으면, -지면, -거든, -면은)은 크메르 조건(បើ, ពេល, នៅពេល, ...រួច)으로 번역하고, 아직 일어나지 않은 일을 과거/완료(ហើយ, រួចហើយ)로 쓰지 않는다. 원문이 '이미 ~했다'일 때만 완료 표현을 쓴다.";
+const DEFAULT_PROMPT_REGISTER_KHMER_TO_KOREAN =
+  "자연스러운 한국어로 번역한다. 크메르 존칭·애칭(អូន/បង 등)을 한국어 대화체에 맞게 의역한다. 부정문(កុំ)과 의문문(ទេ/អត់)의 극성을 정확히 반영한다.";
+
 function loadConfig() {
   const configPath = path.isAbsolute(process.env.CONFIG_PATH || "")
     ? process.env.CONFIG_PATH
@@ -48,21 +53,42 @@ function loadConfig() {
 
     // legacy (단방향) 지원용. 현재 프로젝트는 auto(한글<->크메르) 사용.
     targetLanguage: cfg.targetLanguage || "Korean",
-    // 기본값: 크메르 봇 운영값 기준 (Gemini 우선)
+    // 기본값: 크메르 봇 운영값 기준 (Gemini Flash 우선 — pro는 API 키별 미지원 가능)
     model: cfg.model || "gemini-2.5-flash",
-    // Gemini 실패/제한 시 폴백 (결제/쿼터 문제 대비)
-    fallbackModel: cfg.fallbackModel || "gpt-5.2",
-    maxInputChars: Number.isFinite(cfg.maxInputChars) ? cfg.maxInputChars : 2500,
+    // Gemini 실패 시 OpenAI 폴백 (null/"" 이면 비활성)
+    fallbackModel:
+      cfg.fallbackModel === null || cfg.fallbackModel === "" || cfg.fallbackModel === false
+        ? null
+        : typeof cfg.fallbackModel === "string" && cfg.fallbackModel.trim()
+          ? cfg.fallbackModel.trim()
+          : null,
+    // 방향별 모델(선택). 미설정 시 model 사용.
+    khmerToKoreanModel: cfg.khmerToKoreanModel || null,
+    koreanToKhmerModel: cfg.koreanToKhmerModel || null,
+    // 번역 시 참고할 최근 원문+번역 쌍 개수
+    contextPairCount: Number.isFinite(cfg.contextPairCount) ? cfg.contextPairCount : 3,
+    maxChunks: Number.isFinite(cfg.maxChunks) ? cfg.maxChunks : 20,
+    maxChunkChars: Number.isFinite(cfg.maxChunkChars) ? cfg.maxChunkChars : null,
+    maxInputChars: Number.isFinite(cfg.maxInputChars) ? cfg.maxInputChars : 8000,
     systemPrompt:
       cfg.systemPrompt ||
       "You are a translator. Translate into the requested target language. Preserve line breaks and emojis. Output only the translation.",
+    promptRegisterKoreanToKhmer:
+      typeof cfg.promptRegisterKoreanToKhmer === "string" && cfg.promptRegisterKoreanToKhmer.trim()
+        ? cfg.promptRegisterKoreanToKhmer.trim()
+        : DEFAULT_PROMPT_REGISTER_KOREAN_TO_KHMER,
+    promptRegisterKhmerToKorean:
+      typeof cfg.promptRegisterKhmerToKorean === "string" && cfg.promptRegisterKhmerToKorean.trim()
+        ? cfg.promptRegisterKhmerToKorean.trim()
+        : DEFAULT_PROMPT_REGISTER_KHMER_TO_KOREAN,
 
     // auto 번역 (한글<->크메르어 또는 한글<->베트남어)
     autoTranslate: cfg.autoTranslate !== false,
     koreanTo: cfg.koreanTo || "Khmer",
     khmerTo: cfg.khmerTo || "Korean",
     vietnameseTo: cfg.vietnameseTo || "Korean",
-    assumeLatinIsVietnamese: cfg.assumeLatinIsVietnamese !== false,
+    assumeLatinIsVietnamese: cfg.assumeLatinIsVietnamese === true,
+    romanticKhmerRegister: cfg.romanticKhmerRegister === true,
 
     // telegram runtime
     // - mode: "polling"(기본) | "webhook"

@@ -26,6 +26,9 @@
   },
 
   "maxInputChars": 2500,
-  "systemPrompt": "You are a translator. Translate into the requested target language. Preserve line breaks and emojis. Output only the translation."
+  "systemPrompt": "You are a translator. Translate into the requested target language. Preserve line breaks and emojis. Output only the translation.",
+
+  "promptRegisterKoreanToKhmer": "듣는 사람은 여자 연인이다. 연인 말투로 자연스러운 크메르어로 번역한다.",
+  "promptRegisterKhmerToKorean": "듣는 사람은 남자 연인이다. 남자에게 하는 연인 말투로 자연스러운 한국어로 번역한다."
 }
 

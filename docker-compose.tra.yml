@@ -1,10 +1,15 @@
+# lnteletranslate-tra: khmer 스택(64000)과 분리된 독립 인스턴스
+# 준비: cp configs/tra/config.example.json configs/tra/config.json 후 토큰·API 키 입력
+# (configs/tra/config.json 은 gitignore — 서버에만 둠)
 services:
   lnteletranslate-tra:
     build: .
     container_name: lnteletranslate-tra
     restart: unless-stopped
+    environment:
+      CONFIG_PATH: /app/config-tra.json
     volumes:
-      - ./config.json:/app/config.json:ro
+      - ./configs/tra/config.json:/app/config-tra.json:ro
       - ./data/tra:/app/data
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:

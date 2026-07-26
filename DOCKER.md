@@ -84,6 +84,15 @@ docker compose logs -f lnteletranslate-vietnam
 docker compose stop lnteletranslate-vietnam
 ```
 
+#### tra 전용 스택 (포트 64002, khmer와 독립)
+
+`configs/tra/config.example.json`을 `configs/tra/config.json`으로 복사한 뒤 토큰·키를 채웁니다. Nginx에 `/telegram-webhook-tra` → `127.0.0.1:64002` 를 추가합니다 (`NGINX_WEBHOOKS.md`).
+
+```bash
+docker compose -f docker-compose.tra.yml up -d --build
+docker compose -f docker-compose.tra.yml logs -f
+```
+
 ## 언어 선택 기능
 
 봇이 실행되면 텔레그램에서 다음 명령어를 사용하여 언어를 선택할 수 있습니다:

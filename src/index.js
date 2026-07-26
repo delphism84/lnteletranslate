@@ -1,6 +1,13 @@
 const TelegramBot = require("node-telegram-bot-api");
 const { loadConfig } = require("./config");
-const { createOpenAIClient, createGeminiClient, translateText, getPronunciationBreakdown } = require("./openaiClient");
+const {
+  detectScript,
+  isKoreanSource,
+  analyzeSourceLanguage,
+  formatScriptRatios,
+} = require("./scriptDetection");
+const { createOpenAIClient, createGeminiClient, translateTextInChunks, getPronunciationBreakdown } = require("./openaiClient");
+const { resolveMaxChunkChars, formatPartPrefix } = require("./textChunker");
 const { acquirePidLock } = require("./pidLock");
 const express = require("express");
 const https = require("https");
@@ -30,6 +37,32 @@ function isEmojiOnly(text) {
   return !hasNormalChars && text.trim().length > 0;
 }
 
+const SHORT_ENGLISH_MAX_WORDS = 3;
+
+function isShortEnglishNoTranslate(text) {
+  if (!text || typeof text !== "string") return false;
+  const raw = text.trim();
+  if (!raw) return false;
+
+  if (/[\uAC00-\uD7A3\u1780-\u17FF]/.test(raw)) return false;
+  if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/.test(raw)) {
+    return false;
+  }
+
+  const words = raw
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}]/gu, " ")
+    .replace(/[^\p{L}'-]+/gu, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (words.length === 0 || words.length > SHORT_ENGLISH_MAX_WORDS) return false;
+  if (!words.every((w) => /^[a-zA-Z'-]+$/.test(w))) return false;
+  if (words.some((w) => w.length > 24)) return false;
+
+  return true;
+}
+
 function shouldProcessMessage(msg, cfg) {
   const chatId = msg?.chat?.id;
   if (chatId == null) return false;
@@ -49,54 +82,20 @@ function shouldProcessMessage(msg, cfg) {
     return false;
   }
 
-  return true;
-}
-
-function detectScript(text, assumeLatinIsVietnamese = false) {
-  if (!text || typeof text !== "string") return "unknown";
-  
-  // 특수문자와 이모지만 있는 경우 제거하고 판단
-  const cleanText = text.replace(/[\s\p{P}\p{S}\p{Emoji}]/gu, "");
-  if (!cleanText) return "unknown"; // 특수문자/이모지만 있으면 unknown
-  
-  // 베트남어 봇용 언어 감지 (크메르어 지원 포함)
-  // - hangul: 가-힣
-  // - khmer: U+1780–U+17FF (Khmer)
-  // - vietnamese: 베트남어 특수 문자 (ă, â, ê, ô, ơ, ư, đ 등)
-  const hasHangul = /[\uAC00-\uD7A3]/.test(text);
-  const hasKhmer = /[\u1780-\u17FF]/.test(text);
-  const hasVietnameseChars = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/.test(text);
-  const hasLatin = /[a-zA-Z]/.test(text);
-  
-  // 크메르어가 있으면 크메르어로 감지 (우선순위 높음)
-  if (hasKhmer && !hasHangul && !hasVietnameseChars) return "khmer";
-  if (hasHangul && !hasKhmer && !hasVietnameseChars) return "hangul";
-  if (hasVietnameseChars || (assumeLatinIsVietnamese && hasLatin && !hasHangul && !hasKhmer)) return "vietnamese";
-  if (hasHangul && hasVietnameseChars) return "mixed";
-  if (hasHangul && hasKhmer) return "mixed";
-  
-  // 라틴 문자만 있으면 베트남어로 간주 (assumeLatinIsVietnamese가 true인 경우)
-  if (assumeLatinIsVietnamese && hasLatin && !hasHangul && !hasKhmer && !hasVietnameseChars) {
-    return "vietnamese";
+  if (isShortEnglishNoTranslate(text)) {
+    console.log(`[message] Short English passthrough (no translate): ${text.substring(0, 40)}`);
+    return false;
   }
-  
-  return "unknown";
+
+  return true;
 }
 
 function pickTargetLanguage(cfg, text, replyText, forcedLanguage = null) {
   if (!cfg.autoTranslate) return cfg.targetLanguage || "Korean";
 
-  // 번역 방향 단순화:
-  // - (의미 있는) 첫 글자 또는 본문에 한글이 포함되면: 한국어 -> (koreanTo)  (크메르 봇이면 Khmer, 베트남 봇이면 Vietnamese)
-  // - 그 외: (상대 언어) -> Korean (vietnameseTo/khmerTo 설정 사용)
+  // 영어 접두어는 무시하고, 한글/크메르/베트남어 글자 비율로 출발 언어를 판단한다.
   const raw = String(text || "");
-  const trimmed = raw.trimStart();
-  // "08:00 : 정규직 ..." 처럼 숫자/기호로 시작하는 문장은 첫 글자만 보면 오판이 잦습니다.
-  // 선행 숫자/구두점/기호를 제거한 뒤 첫 글자를 보되, 본문 어디에든 한글이 있으면 한국어로 간주합니다.
-  const firstMeaningfulChar = trimmed.replace(/^[\s\p{P}\p{S}\d:]+/gu, "").slice(0, 1);
-  const startsWithHangul = /[가-힣]/.test(firstMeaningfulChar);
-  const containsHangul = /[\uAC00-\uD7A3]/.test(raw);
-  const isKoreanLike = startsWithHangul || containsHangul;
+  const isKoreanLike = isKoreanSource(raw);
 
   // 강제 언어가 지정된 경우 (예: /언어 1로 크메르어 선택)
   if (forcedLanguage === "Khmer" || forcedLanguage === "khmer") {
@@ -112,7 +111,34 @@ function pickTargetLanguage(cfg, text, replyText, forcedLanguage = null) {
 
 function clampText(text, maxChars) {
   if (!maxChars || text.length <= maxChars) return text;
-  return text.slice(0, maxChars) + "\n\n(…truncated)";
+  return text.slice(0, maxChars);
+}
+
+function buildSystemPromptForDirection(basePrompt, registerPrompts, targetLanguage, script) {
+  const base = (basePrompt || "").trim();
+  let extra = "";
+  if (targetLanguage === "Khmer" && script === "hangul") {
+    extra = (registerPrompts?.promptRegisterKoreanToKhmer || "").trim();
+  } else if (targetLanguage === "Korean" && script === "khmer") {
+    extra = (registerPrompts?.promptRegisterKhmerToKorean || "").trim();
+  } else if (targetLanguage === "Vietnamese" && script === "hangul") {
+    extra = (registerPrompts?.promptRegisterKoreanToVietnamese || "").trim();
+  } else if (targetLanguage === "Korean" && script === "vietnamese") {
+    extra = (registerPrompts?.promptRegisterVietnameseToKorean || "").trim();
+  }
+  if (!extra) return base;
+  return base ? `${base}\n\n${extra}` : extra;
+}
+
+function resolveTranslationModel(cfg, { script, targetLanguage, forcedRecognitionModel }) {
+  if (forcedRecognitionModel === 2) return "gpt-5.2";
+
+  const isKhmerToKorean = targetLanguage === "Korean" && script === "khmer";
+  const isKoreanToKhmer = targetLanguage === "Khmer" && script === "hangul";
+
+  if (isKhmerToKorean && cfg.khmerToKoreanModel) return cfg.khmerToKoreanModel;
+  if (isKoreanToKhmer && cfg.koreanToKhmerModel) return cfg.koreanToKhmerModel;
+  return cfg.model;
 }
 
 function normalizeModelSelection(n) {
@@ -213,9 +239,10 @@ async function safeSendMessage(bot, chatId, text, options = {}) {
   throw lastErr;
 }
 
-function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences, recognitionModelPreferences, pronunciationPreferences, botId, systemPrompt }) {
-  const resolvedSystemPrompt = systemPrompt || cfg.systemPrompt;
+function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences, recognitionModelPreferences, pronunciationPreferences, conversationHistory, botId, systemPrompt, registerPrompts }) {
+  const resolvedBaseSystemPrompt = systemPrompt || cfg.systemPrompt;
   const logPrefix = botId ? `[${botId}] ` : "";
+  const contextPairCount = cfg.contextPairCount || 3;
 
   bot.on("polling_error", (err) => {
     console.error(`${logPrefix}[tele-translate] polling_error:`, err?.message || err);
@@ -265,12 +292,17 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
             : null);
       }
       const targetLanguage = pickTargetLanguage(cfg, original, replyText, forcedLanguage);
+      const priorPairs = (conversationHistory?.[chatId] || []).slice(-contextPairCount);
 
-      const script = detectScript(original, cfg.assumeLatinIsVietnamese !== false);
-      console.log(`${logPrefix}[message] Processing: "${original.substring(0, 50)}..." => ${targetLanguage}${forcedLanguage ? ` (forced: ${forcedLanguage})` : ''} [script: ${script}${replyText ? `, reply: "${replyText.substring(0, 30)}..."` : ''}]`);
+      const script = detectScript(original, cfg.assumeLatinIsVietnamese);
+      const scriptRatios = formatScriptRatios(analyzeSourceLanguage(original).counts);
+      console.log(`${logPrefix}[message] Processing: "${original.substring(0, 50)}..." => ${targetLanguage}${forcedLanguage ? ` (forced: ${forcedLanguage})` : ''} [script: ${script}, ratios: ${scriptRatios}${replyText ? `, reply: "${replyText.substring(0, 30)}..."` : ''}, contextPairs: ${priorPairs.length}]`);
 
-      const resolvedModel =
-        forcedRecognitionModel === 2 ? "gpt-5.2" : cfg.model;
+      const resolvedModel = resolveTranslationModel(cfg, {
+        script,
+        targetLanguage,
+        forcedRecognitionModel,
+      });
       const resolvedFallbackModel = cfg.fallbackModel;
 
       // 간단 중복 방지: 같은 메시지에 대해 여러 번 처리되지 않게
@@ -284,44 +316,84 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
       main._seen.add(key);
       if (main._seen.size > 3000) main._seen.clear();
 
-      console.log(`${logPrefix}[message] Translating to ${targetLanguage}...`);
-      const translated = await translateText({
+      console.log(`${logPrefix}[message] Translating to ${targetLanguage}... (model: ${resolvedModel})`);
+      const systemPromptForMessage = buildSystemPromptForDirection(
+        resolvedBaseSystemPrompt,
+        registerPrompts,
+        targetLanguage,
+        script
+      );
+      const maxChunkChars = resolveMaxChunkChars({
+        model: resolvedModel,
+        fallbackModel: resolvedFallbackModel,
+        cfg,
+      });
+      const translationParts = await translateTextInChunks({
         client,
         geminiClient,
         model: resolvedModel,
         fallbackModel: resolvedFallbackModel,
-        systemPrompt: resolvedSystemPrompt,
+        systemPrompt: systemPromptForMessage,
         targetLanguage,
         text: original,
+        contextPairs: priorPairs,
+        sourceScript: script,
+        contextPairCount,
+        maxChunkChars,
+        maxChunks: cfg.maxChunks,
+        romanticKhmerRegister: cfg.romanticKhmerRegister,
       });
 
-      if (!translated || !translated.trim()) {
+      const nonEmptyParts = translationParts.filter((p) => p?.translated?.trim());
+      if (nonEmptyParts.length === 0) {
         console.log(`${logPrefix}[message] Translation returned empty, skipping`);
         return;
       }
 
-      // 번역 결과가 원문과 너무 유사하면 번역 실패로 간주
-      const translatedClean = translated.trim();
+      const translatedClean = nonEmptyParts.map((p) => p.translated.trim()).join("\n");
       const originalClean = original.trim();
       if (translatedClean === originalClean && script !== "unknown") {
         console.log(`${logPrefix}[message] Translation result same as original, may be translation failure`);
-        // 원문과 같으면 번역 실패로 간주하고 재시도하지 않음 (무한 루프 방지)
         return;
       }
 
-      console.log(`${logPrefix}[message] Translation result: "${translated.substring(0, 50)}..."`);
-      await safeSendMessage(bot, chatId, translated, {
-        reply_to_message_id: msg.message_id,
-        disable_web_page_preview: true,
-      });
-      console.log(`${logPrefix}[message] Message sent successfully`);
+      if (nonEmptyParts.length > 1) {
+        console.log(`${logPrefix}[message] Split translation into ${nonEmptyParts.length} parts (maxChunkChars=${maxChunkChars})`);
+      }
+
+      for (const part of nonEmptyParts) {
+        const body = `${formatPartPrefix(part.part, part.total)}${part.translated}`;
+        console.log(
+          `${logPrefix}[message] Translation part ${part.part}/${part.total}: "${part.translated.substring(0, 50)}..."`
+        );
+        await safeSendMessage(bot, chatId, body, {
+          reply_to_message_id: msg.message_id,
+          disable_web_page_preview: true,
+        });
+      }
+      console.log(`${logPrefix}[message] Message sent successfully (${nonEmptyParts.length} part(s))`);
+
+      // 최근 대화 저장: 원문+번역 쌍 (다음 번역 시 맥락용)
+      if (conversationHistory) {
+        if (!conversationHistory[chatId]) conversationHistory[chatId] = [];
+        conversationHistory[chatId].push({
+          original: originalClean,
+          translated: translatedClean,
+          sourceScript: script,
+          targetLanguage,
+        });
+        const maxStoredPairs = Math.max(contextPairCount * 3, 10);
+        if (conversationHistory[chatId].length > maxStoredPairs) {
+          conversationHistory[chatId] = conversationHistory[chatId].slice(-maxStoredPairs);
+        }
+      }
 
       // 발음 옵션: 크메르→한국어 또는 한국어→크메르어일 때 단어별 발음(뜻) 추가 전송
       const pronunciationOn = !!pronunciationPreferences[chatId];
       const isKhmerToKorean = targetLanguage === "Korean" && script === "khmer";
       const isKoreanToKhmer = targetLanguage === "Khmer" && script === "hangul";
       const willSendPronunciation = pronunciationOn && (isKhmerToKorean || isKoreanToKhmer);
-      const pronunciationInputText = isKoreanToKhmer ? translated : original; // 한→크메르면 번역문(크메르어) 기준으로 발음
+      const pronunciationInputText = isKoreanToKhmer ? translatedClean : original; // 한→크메르면 번역문(크메르어) 기준으로 발음
       console.log(`${logPrefix}[message] pronunciation check: chatId=${chatId} on=${pronunciationOn} targetLang=${targetLanguage} script=${script} => ${willSendPronunciation ? "will send" : "skip"}`);
       if (willSendPronunciation) {
         try {
@@ -456,11 +528,11 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
         }
         // 기본 설정 사용(= Gemini 우선 + 폴백)은 별도 강제값을 저장하지 않습니다.
         delete recognitionModelPreferences[chatId];
-        const fallback = cfg.fallbackModel || "gpt-5.2";
+        const fallback = cfg.fallbackModel;
         await safeSendMessage(
           bot,
           chatId,
-          `인식모델 1로 설정되었습니다. (기본: ${cfg.model}${fallback ? `, 폴백: ${fallback}` : ""})`,
+          `인식모델 1로 설정되었습니다. (기본: ${cfg.model}${fallback ? `, 폴백: ${fallback}` : ", 폴백 없음"})`,
           { reply_to_message_id: msg.message_id }
         );
         return;
@@ -486,12 +558,12 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
 
       // 안내 + 현재 상태
       const currentForced = recognitionModelPreferences[chatId] || 1;
-      const fallback = cfg.fallbackModel || "gpt-5.2";
+      const fallback = cfg.fallbackModel;
       await safeSendMessage(
         bot,
         chatId,
         "인식모델 선택:\n" +
-          `/인식모델 1 - 기본 설정 사용 (기본: ${cfg.model}${fallback ? `, 폴백: ${fallback}` : ""})\n` +
+          `/인식모델 1 - 기본 설정 사용 (기본: ${cfg.model}${fallback ? `, 폴백: ${fallback}` : ", 폴백 없음"})\n` +
           "/인식모델 2 - gpt-5.2\n\n" +
           `현재 설정: /인식모델 ${currentForced}`,
         { reply_to_message_id: msg.message_id }
@@ -521,6 +593,7 @@ async function main() {
   const languagePreferences = {};
   const recognitionModelPreferences = {};
   const pronunciationPreferences = {};
+  const conversationHistory = {};
 
   const botInstances = [];
   const usePolling = mode === "polling";
@@ -545,8 +618,15 @@ async function main() {
       languagePreferences,
       recognitionModelPreferences,
       pronunciationPreferences,
+      conversationHistory,
       botId: b.id || b.webhookPath?.replace(/^\/telegram-webhook-?/, "") || "bot",
       systemPrompt: mergedSystemPrompt,
+      registerPrompts: {
+        promptRegisterKoreanToKhmer: cfg.promptRegisterKoreanToKhmer || "",
+        promptRegisterKhmerToKorean: cfg.promptRegisterKhmerToKorean || "",
+        promptRegisterKoreanToVietnamese: cfg.promptRegisterKoreanToVietnamese || "",
+        promptRegisterVietnameseToKorean: cfg.promptRegisterVietnameseToKorean || "",
+      },
     });
     botInstances.push({ bot, webhookPath: b.webhookPath || "/telegram-webhook" });
   }
@@ -615,7 +695,7 @@ async function main() {
   // 시작 로그
   const langInfo = `ko->${cfg.koreanTo}, vi->${cfg.vietnameseTo}, km->${cfg.khmerTo || "Korean"}`;
   console.log(
-    `[tele-translate] running. mode=${mode}, model=${cfg.model}, autoTranslate=${
+    `[tele-translate] running. mode=${mode}, model=${cfg.model}, fallback=${cfg.fallbackModel || "none"}, contextPairs=${cfg.contextPairCount}, autoTranslate=${
       cfg.autoTranslate ? "on" : "off"
     }` +
       `, ${langInfo}` +
