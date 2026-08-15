@@ -1,10 +1,15 @@
-node_modules/
+# 의존성 — 루트의 node_modules 는 covert-web/node_modules 로 향하는 심볼릭 링크라
+# "node_modules/" (디렉터리 전용) 패턴으로는 걸러지지 않는다. 슬래시 없이 둔다.
+node_modules
+
+# 비밀값이 든 설정 — 모든 하위 경로에서 제외
 config.json
 configs/*/config.json
 .env
 .env.local
+
+# 런타임 산출물
 data/
 *.log
 .tele-translate.pid
 certs/
-

@@ -5,7 +5,7 @@
 
   "targetLanguage": "Korean",
   "model": "gemini-2.5-flash",
-  "fallbackModel": null,
+  "fallbackModel": "gpt-5.2",
   "koreanToKhmerModel": "gpt-5.2",
   "contextPairCount": 3,
   "maxChunks": 20,

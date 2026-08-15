@@ -9,6 +9,7 @@ const {
 const { createOpenAIClient, createGeminiClient, translateTextInChunks, getPronunciationBreakdown } = require("./openaiClient");
 const { resolveMaxChunkChars, formatPartPrefix } = require("./textChunker");
 const { acquirePidLock } = require("./pidLock");
+const { appendCovertChat } = require("./covertChatStore");
 const express = require("express");
 const https = require("https");
 const fs = require("fs");
@@ -63,20 +64,41 @@ function isShortEnglishNoTranslate(text) {
   return true;
 }
 
-function shouldProcessMessage(msg, cfg) {
+function isAllowedChat(msg, cfg) {
   const chatId = msg?.chat?.id;
   if (chatId == null) return false;
-
-  // allowedChatIds가 배열이고, 비어있지 않을 때만 필터 적용
   if (Array.isArray(cfg.allowedChatIds) && cfg.allowedChatIds.length > 0) {
-    if (!cfg.allowedChatIds.includes(chatId)) return false;
+    return cfg.allowedChatIds.includes(chatId);
   }
+  return true;
+}
 
-  const text = msg?.text;
+/** 스티커/이모지만 → "emot", 사진 → "picture" (c.dair + peer bot 알림용) */
+function classifyMediaSignal(msg) {
+  if (!msg) return null;
+  if (Array.isArray(msg.photo) && msg.photo.length > 0) return "picture";
+  if (msg.sticker) return "emot";
+  // 애니메이션(GIF)은 이모티콘에 가깝게 처리
+  if (msg.animation && !msg.caption) return "emot";
+  const text = typeof msg.text === "string" ? msg.text : "";
+  if (text && isEmojiOnly(text)) return "emot";
+  return null;
+}
+
+function messageTextForTranslate(msg) {
+  if (typeof msg?.text === "string" && msg.text.trim()) return msg.text;
+  if (typeof msg?.caption === "string" && msg.caption.trim()) return msg.caption;
+  return null;
+}
+
+function shouldProcessMessage(msg, cfg) {
+  if (!isAllowedChat(msg, cfg)) return false;
+
+  const text = messageTextForTranslate(msg);
   if (typeof text !== "string" || !text.trim()) return false;
   if (text.startsWith("/")) return false; // 명령어는 패스
   
-  // 이모티콘만 있는 메시지는 처리하지 않음
+  // 이모티콘만 있는 메시지는 번역하지 않음 (media signal로 별도 처리)
   if (isEmojiOnly(text)) {
     console.log(`[message] Emoji-only message filtered out: ${text.substring(0, 20)}`);
     return false;
@@ -239,10 +261,101 @@ async function safeSendMessage(bot, chatId, text, options = {}) {
   throw lastErr;
 }
 
+/** peer 봇(@transKhmer_1_bot 등)으로 알림 — 봇끼리 DM 불가, chatIds로 전송 */
+function createPeerNotifier(cfg, logPrefix) {
+  const peer = cfg.peerNotify || { enabled: false };
+  if (!peer.enabled || !peer.botToken) {
+    return async () => {};
+  }
+
+  const peerBot = new TelegramBot(peer.botToken, { polling: false });
+  const lastSentAt = new Map();
+  const label = peer.botUsername ? `@${peer.botUsername.replace(/^@/, "")}` : "peer-bot";
+  const allowGroups = peer.allowGroupTargets === true;
+  const only = new Set(
+    (peer.onlyChatIds && peer.onlyChatIds.length
+      ? peer.onlyChatIds
+      : Array.isArray(cfg.allowedChatIds) && cfg.allowedChatIds.length
+        ? cfg.allowedChatIds
+        : []
+    ).map(Number)
+  );
+
+  return async function notifyPeer(sourceMsg, overrideText) {
+    try {
+      const sourceChatId = sourceMsg?.chat?.id;
+      // tra가 있는 채팅에서만 알림 트리거
+      if (only.size > 0 && !only.has(Number(sourceChatId))) {
+        console.warn(`${logPrefix}[peerNotify] blocked: source chat ${sourceChatId} not in onlyChatIds`);
+        return;
+      }
+      const now = Date.now();
+      // media signal(emot/picture)은 cooldown 무시 — 매번 알림
+      const isMediaSignal = overrideText === "emot" || overrideText === "picture";
+      if (!isMediaSignal && peer.minIntervalMs > 0 && sourceChatId != null) {
+        const prev = lastSentAt.get(sourceChatId) || 0;
+        if (now - prev < peer.minIntervalMs) {
+          console.log(`${logPrefix}[peerNotify] skipped (cooldown) chat=${sourceChatId}`);
+          return;
+        }
+      }
+
+      let targets = new Set(peer.chatIds || []);
+      if (peer.sameChat && sourceChatId != null) targets.add(sourceChatId);
+      // sameChat으로 tra 그룹이 섞이면, 그룹 타겟은 allowGroupTargets일 때만 유지
+      if (!allowGroups) {
+        targets = new Set([...targets].filter((id) => Number(id) > 0));
+      }
+      if (targets.size === 0) {
+        console.warn(`${logPrefix}[peerNotify] no allowed targets (DM only)`);
+        return;
+      }
+
+      let body = (typeof overrideText === "string" && overrideText.trim())
+        ? overrideText.trim()
+        : (peer.text || "Function Check");
+      if (peer.includePreview && !isMediaSignal) {
+        const title =
+          sourceMsg?.chat?.title ||
+          sourceMsg?.chat?.username ||
+          sourceMsg?.chat?.first_name ||
+          String(sourceChatId);
+        const preview = String(sourceMsg?.text || sourceMsg?.caption || "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .slice(0, 80);
+        body = `${body}\n[tra] ${title}\n${preview}${preview.length >= 80 ? "…" : ""}`;
+      }
+
+      for (const targetId of targets) {
+        if (!allowGroups && Number(targetId) < 0) {
+          console.warn(
+            `${logPrefix}[peerNotify] blocked group target ${targetId} (allowGroupTargets=false)`
+          );
+          continue;
+        }
+        try {
+          await peerBot.sendMessage(targetId, body, { disable_web_page_preview: true });
+          console.log(`${logPrefix}[peerNotify] sent via ${label} -> ${targetId}`);
+        } catch (err) {
+          console.error(
+            `${logPrefix}[peerNotify] fail ${label} -> ${targetId}:`,
+            err?.response?.body?.description || err?.message || err
+          );
+        }
+      }
+      if (sourceChatId != null) lastSentAt.set(sourceChatId, now);
+    } catch (err) {
+      console.error(`${logPrefix}[peerNotify] error:`, err?.message || err);
+    }
+  };
+}
+
 function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences, recognitionModelPreferences, pronunciationPreferences, conversationHistory, botId, systemPrompt, registerPrompts }) {
   const resolvedBaseSystemPrompt = systemPrompt || cfg.systemPrompt;
   const logPrefix = botId ? `[${botId}] ` : "";
   const contextPairCount = cfg.contextPairCount || 3;
+  const notifyPeer = createPeerNotifier(cfg, logPrefix);
 
   bot.on("polling_error", (err) => {
     console.error(`${logPrefix}[tele-translate] polling_error:`, err?.message || err);
@@ -251,6 +364,12 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
   bot.on("message", async (msg) => {
     try {
       console.log(`${logPrefix}[message] Received message from chat ${msg.chat.id}, message_id: ${msg.message_id}`);
+
+      // sendtotra 등 봇이 올린 릴레이 메시지는 재번역/알림 제외
+      if (msg?.from?.is_bot) {
+        console.log(`${logPrefix}[message] skip bot message from=${msg.from?.username || msg.from?.id}`);
+        return;
+      }
       
       const chatId = msg.chat.id;
       let forcedLanguage = null;
@@ -274,14 +393,50 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
           languagePreferences[chatId] = "Vietnamese";
         }
       }
+
+      // 이모티콘/스티커/사진 → c.dair.co.kr + peer bot에 emot/picture 알림
+      const mediaSignal = classifyMediaSignal(msg);
+      if (mediaSignal && isAllowedChat(msg, cfg)) {
+        console.log(`${logPrefix}[media] signal=${mediaSignal} chatId=${chatId} msg=${msg.message_id}`);
+        try {
+          appendCovertChat(
+            {
+              chatId,
+              original: mediaSignal,
+              translated: "",
+              sourceScript: "signal",
+              targetLanguage: null,
+              source: "telegram-media",
+            },
+            { max: 60 }
+          );
+        } catch (persistErr) {
+          console.warn(`${logPrefix}[media] covert persist failed:`, persistErr?.message || persistErr);
+        }
+        void notifyPeer(msg, mediaSignal);
+
+        // 사진+캡션이면 아래 번역도 계속, 그 외(스티커/이모지만/사진만)는 종료
+        const captionOrText = messageTextForTranslate(msg);
+        const hasTranslatable =
+          captionOrText &&
+          !captionOrText.startsWith("/") &&
+          !isEmojiOnly(captionOrText) &&
+          !isShortEnglishNoTranslate(captionOrText);
+        if (!hasTranslatable) return;
+      }
       
       if (!shouldProcessMessage(msg, cfg)) {
-        const reason = isEmojiOnly(msg.text) ? "emoji-only" : "filtered";
-        console.log(`${logPrefix}[message] Message filtered out (reason: ${reason}, chatId: ${msg.chat.id}, text: ${msg.text?.substring(0, 50)})`);
+        const raw = messageTextForTranslate(msg);
+        const reason = isEmojiOnly(raw) ? "emoji-only" : "filtered";
+        console.log(`${logPrefix}[message] Message filtered out (reason: ${reason}, chatId: ${msg.chat.id}, text: ${raw?.substring(0, 50)})`);
         return;
       }
 
-      const original = clampText(msg.text, cfg.maxInputChars);
+      // 번역과 병렬로 peer 봇 알림 (실패해도 번역은 계속)
+      // media signal 이미 알렸으면 Function Check는 생략(중복 DM 방지)
+      if (!mediaSignal) void notifyPeer(msg);
+
+      const original = clampText(messageTextForTranslate(msg), cfg.maxInputChars);
       // 답글 메시지의 텍스트 추출 (특수문자/이모지가 있어도 처리)
       let replyText = null;
       if (msg?.reply_to_message) {
@@ -386,6 +541,20 @@ function setupBotHandlers(bot, cfg, { client, geminiClient, languagePreferences,
         if (conversationHistory[chatId].length > maxStoredPairs) {
           conversationHistory[chatId] = conversationHistory[chatId].slice(-maxStoredPairs);
         }
+      }
+
+      // covert viewer (c.dair.co.kr) 용 최근 20개 영속화
+      try {
+        appendCovertChat({
+          chatId,
+          original: originalClean,
+          translated: translatedClean,
+          sourceScript: script,
+          targetLanguage,
+          source: "telegram",
+        }, { max: 60 });
+      } catch (persistErr) {
+        console.warn(`${logPrefix}[covert] persist failed:`, persistErr?.message || persistErr);
       }
 
       // 발음 옵션: 크메르→한국어 또는 한국어→크메르어일 때 단어별 발음(뜻) 추가 전송

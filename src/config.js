@@ -110,6 +110,38 @@ function loadConfig() {
         keyPath: webhookCfg.keyPath || cfg.webhookKeyPath || null,
       },
     },
+
+    // tra 수신 시 다른 봇(@transKhmer_1_bot 등)으로 알림.
+    // 텔레그램은 봇→봇 DM 불가 → peer 봇 토큰으로 chatIds(유저/그룹)에 전송.
+    peerNotify: normalizePeerNotify(cfg.peerNotify),
+  };
+}
+
+function normalizePeerNotify(raw) {
+  if (!raw || typeof raw !== "object") {
+    return { enabled: false };
+  }
+  const chatIds = Array.isArray(raw.chatIds)
+    ? raw.chatIds.map((id) => Number(id)).filter((id) => Number.isFinite(id))
+    : [];
+  const token =
+    typeof raw.botToken === "string" && raw.botToken.trim() ? raw.botToken.trim() : null;
+  return {
+    enabled: raw.enabled === true && Boolean(token),
+    botToken: token,
+    botUsername: typeof raw.botUsername === "string" ? raw.botUsername.trim() : "",
+    text:
+      typeof raw.text === "string" && raw.text.trim() ? raw.text.trim() : "Check Function",
+    chatIds,
+    sameChat: raw.sameChat === true,
+    includePreview: raw.includePreview !== false,
+    minIntervalMs: Number.isFinite(raw.minIntervalMs) ? Math.max(0, raw.minIntervalMs) : 0,
+    // 기본 false: peer 봇이 그룹/슈퍼그룹으로 메시지 보내지 않음
+    allowGroupTargets: raw.allowGroupTargets === true,
+    // 비어 있지 않으면 이 목록에 있는 chatId로만 발송 (tra 채팅방 등)
+    onlyChatIds: Array.isArray(raw.onlyChatIds)
+      ? raw.onlyChatIds.map((id) => Number(id)).filter((id) => Number.isFinite(id))
+      : [],
   };
 }
 
